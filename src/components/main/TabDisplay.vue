@@ -4,6 +4,6 @@
   </div>
 </template>
 <script setup lang="ts">
-import TabsView from '../generic/TabsView.vue';
-import { TABS as tabs } from '@/stores/main/tabs';
+import TabsView from "../generic/TabsView.vue";
+import { TABS as tabs } from "@/stores/main/tabs";
 </script>

@@ -13,7 +13,6 @@ import LZString from "lz-string";
 import { Upgrades } from "./classes/upgrades";
 import { Resource } from "./classes/resource";
 import { Keypress } from "./classes/keypress";
-
 export const useStore = defineStore("main", {
   state: () => ({
     steam: new Steam(),

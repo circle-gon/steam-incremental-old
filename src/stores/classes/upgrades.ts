@@ -1,12 +1,12 @@
 // upgrades n stuff for most of the game
-import { R } from '../main/utils';
-import { useStore } from '../main';
+import { R } from "../main/utils";
+import { useStore } from "../main";
 import type {
   ConfigType,
   UpgradeType,
   OneTimeUpgradeType,
   OneTimeConfigType,
-} from '../main/types';
+} from "../main/types";
 class Upgrades implements UpgradeType {
   name: string;
   desc: string;
@@ -39,7 +39,7 @@ class Upgrades implements UpgradeType {
   }
 
   getPriceDisplay() {
-    return this.getCurrentPrice() + ' ' + this.getResource();
+    return this.getCurrentPrice() + " " + this.getResource();
   }
 
   isMaxLevel() {
@@ -63,7 +63,7 @@ class Upgrades implements UpgradeType {
   }
 
   getResource() {
-    const res = 'steam';
+    const res = "steam";
     switch (this.layer) {
       default:
         break;

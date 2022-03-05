@@ -11,9 +11,9 @@
   </span>
 </template>
 <script setup lang="ts">
-import { useStore } from '@/stores/main';
-import { computed } from 'vue';
-import type { UpgradeType, OneTimeUpgradeType } from '@/stores/main/types';
+import { useStore } from "@/stores/main";
+import { computed } from "vue";
+import type { UpgradeType, OneTimeUpgradeType } from "@/stores/main/types";
 const store = useStore();
 const props = defineProps<{
   upgId: string | number;
