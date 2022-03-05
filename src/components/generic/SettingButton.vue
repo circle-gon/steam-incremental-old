@@ -4,7 +4,7 @@
   </button>
 </template>
 <script setup lang="ts">
-import type { SettingButtonType } from "@/stores/main/types";
+import type { SettingButtonType } from '@/stores/main/types';
 defineProps<{
   data: SettingButtonType;
 }>();
