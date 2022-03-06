@@ -12,15 +12,16 @@ import TabsView from '../generic/TabsView.vue';
 import SettingsSubtab from '../subtabs/SettingsSubtab.vue';
 import AboutSubtab from '../subtabs/AboutSubtab.vue';
 import ChangelogSubtab from '../subtabs/ChangelogSubtab.vue';
+import type { OPTIONS_TAB_LIST } from '@/stores/main/tabTypes';
 import { getSubtabs, getComputedTab } from '@/stores/main/compUtils';
 const store = useStore();
-const TABS_LIST = {
+const TABS_LIST: OPTIONS_TAB_LIST = {
   settings: SettingsSubtab,
   about: AboutSubtab,
   changelog: ChangelogSubtab,
 };
 const innerTab = computed(() =>
-  getComputedTab(store.innerTabs.options as keyof typeof TABS_LIST, TABS_LIST)
+  getComputedTab(store.innerTabs.options, TABS_LIST)
 );
 const tabs = getSubtabs('options');
 </script>

@@ -52,9 +52,9 @@ import { displayNumber } from "@/stores/main/utils";
 import type { SteamResourceType } from "@/stores/main/types";
 const store = useStore();
 const steam = computed(() => store.steam);
-const isUseable = (otherRes: string) =>
-  store.isUseable("steam", otherRes as SteamResourceType);
-const getResource = (res: string) => {
-  store.steam.getResource(res as SteamResourceType);
+const isUseable = (otherRes: SteamResourceType) =>
+  store.isUseable("steam", otherRes);
+const getResource = (res: SteamResourceType) => {
+  store.steam.getResource(res);
 };
 </script>

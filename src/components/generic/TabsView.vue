@@ -19,16 +19,17 @@
 <script setup lang="ts">
 import { useStore } from "@/stores/main";
 import type { TabsType } from "@/stores/main/types";
+import type {TabOptions} from '@/stores/main/tabTypes'
 const store = useStore();
 defineProps<{
   tabList: TabsType[];
   mainTab: boolean;
 }>();
-const changeTab = (tab: string) => {
+const changeTab = (tab: TabOptions) => {
   store.tab = tab;
 };
 //const shown = computed(() => )
 const changeInnerTab = (tab: string) => {
-  store.innerTabs[store.tab as keyof typeof store.innerTabs] = tab;
+  store.innerTabs[store.tab] = tab;
 };
 </script>

@@ -14,7 +14,8 @@ import { getComputedTab } from "../../stores/main/compUtils";
 const store = useStore();
 const modal = computed((): null | object => {
   if (store.modal !== "") {
-    return getComputedTab(store.modal, {});
+    throw new Error("modals do not exist")
+    //return getComputedTab(store.modal, {});
   }
   return null;
 });
@@ -22,7 +23,7 @@ const closeModal = function () {
   store.modal = "";
 };
 const closeModalHandler = function (e: MouseEvent) {
-  if (e.target.className === "modal") {
+  if ((e.target as Element).className === "modal") {
     closeModal();
   }
 };

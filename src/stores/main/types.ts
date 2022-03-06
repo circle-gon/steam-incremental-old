@@ -1,4 +1,5 @@
 // upgrade type, lore type, tabs type
+import type { TabOptions } from './tabTypes';
 export type FilteredKeys<T, U> = {
   [P in keyof T]: T[P] extends U ? P : never;
 }[keyof T];
@@ -35,12 +36,12 @@ export interface AchievementType {
 export interface ResourceType {
   owned: number;
   multi: number;
+  update: () => void;
+  addNewQueue: (drain: number) => void;
   req?: number;
   k?: number;
   c?: number;
   queue?: QueueType[];
-  update: () => void;
-  addNewQueue: (drain: number) => void;
 }
 export type ResourceQueueType = Required<ResourceType>;
 export interface ResourceInputType {
@@ -120,13 +121,16 @@ export interface StatTrackerType {
   resources: TrackType;
   update: (content: ContentType) => void;
 }
-export interface TabsType {
+interface CoreTabsType {
   display: string;
   actual: string;
   shown: () => boolean;
   lore?: LoreType[];
-  subtabs?: TabsType[];
   buttons?: Array<RealSettingButtonType | undefined>[];
+  subtabs?: CoreTabsType[];
+}
+export interface TabsType extends CoreTabsType {
+  actual: TabOptions;
 }
 export interface InputType {
   min: number;
@@ -146,12 +150,12 @@ export interface AchievementTrackerType {
   hasAchieve: (row: number, col: number) => boolean;
 }
 export interface SettingButtonType {
-  type: "button";
+  type: 'button';
   display: () => string | null;
   do: () => void;
 }
 export interface SettingButtonInputType {
-  type: "input";
+  type: 'input';
   display: () => string | null;
   doInput: (value: number) => void;
   other: InputType;

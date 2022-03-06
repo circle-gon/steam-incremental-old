@@ -9,18 +9,18 @@
 </template>
 
 <script setup lang="ts">
-import BusinessTab from './components/main/BusinessTab.vue';
-import DisplayView from './components/main/DisplayView.vue';
-import TabDisplay from './components/main/TabDisplay.vue';
-import StatsTab from './components/main/StatsTab.vue';
-import LoreTab from './components/main/LoreTab.vue';
-import OptionsTab from './components/main/OptionsTab.vue';
-import AchieveTab from './components/main/AchieveTab.vue';
-import NotificationView from './components/main/NotificationView.vue';
-import ModalView from './components/main/ModalView.vue';
-import { useStore } from './stores/main';
-import { getComputedTab } from './stores/main/compUtils';
-import { onMounted, onBeforeUnmount, computed } from 'vue';
+import BusinessTab from "./components/main/BusinessTab.vue";
+import DisplayView from "./components/main/DisplayView.vue";
+import TabDisplay from "./components/main/TabDisplay.vue";
+import StatsTab from "./components/main/StatsTab.vue";
+import LoreTab from "./components/main/LoreTab.vue";
+import OptionsTab from "./components/main/OptionsTab.vue";
+import AchieveTab from "./components/main/AchieveTab.vue";
+import NotificationView from "./components/main/NotificationView.vue";
+import ModalView from "./components/main/ModalView.vue";
+import { useStore } from "./stores/main";
+import { getComputedTab } from "./stores/main/compUtils";
+import { onMounted, onBeforeUnmount, computed } from "vue";
 const store = useStore();
 const TAB_LIST = {
   business: BusinessTab,
