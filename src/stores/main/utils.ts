@@ -83,5 +83,5 @@ export {
   isUndef,
   R,
   copy,
-  isUndefThrow,
+  ifUndefThrow,
 };

@@ -1,15 +1,15 @@
 import { TABS } from "./tabs";
 import { markRaw } from "vue";
 import type { TabsType, LoreType } from "./types";
-import {isUndefThrow} from './utils'
+import {ifUndefThrow} from './utils'
 const getComputedTab = function <T>(tab: keyof T, choices: T) {
   return markRaw(choices[tab] as unknown as object);
 };
 const getTab = function (tab: string) {
-  return isUndefThrow(TABS.find((_tab) => _tab.actual === tab), `Invalid tab: ${tab}`)
+  return ifUndefThrow(TABS.find((_tab) => _tab.actual === tab), `Invalid tab: ${tab}`)
 };
 const getSubtabs = function (tab: string) {
-  return isUndefThrow(getTab(tab).subtabs, `The tab does not have subtabs: ${tab}`;
+  return ifUndefThrow(getTab(tab).subtabs, `The tab does not have subtabs: ${tab}`);
 };
 const getNextLore = function () {
   let text = "none";
