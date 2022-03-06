@@ -1,5 +1,5 @@
 // upgrade type, lore type, tabs type
-import type { TabOptions } from './tabTypes';
+import type { TabOptions } from "./tabTypes";
 export type FilteredKeys<T, U> = {
   [P in keyof T]: T[P] extends U ? P : never;
 }[keyof T];
@@ -150,12 +150,12 @@ export interface AchievementTrackerType {
   hasAchieve: (row: number, col: number) => boolean;
 }
 export interface SettingButtonType {
-  type: 'button';
+  type: "button";
   display: () => string | null;
   do: () => void;
 }
 export interface SettingButtonInputType {
-  type: 'input';
+  type: "input";
   display: () => string | null;
   doInput: (value: number) => void;
   other: InputType;

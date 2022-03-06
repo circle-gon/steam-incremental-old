@@ -3,12 +3,12 @@ export interface BUSINESS_TAB_LIST {
   steam: object;
 }
 export interface OPTIONS_TAB_LIST {
-  settings: object
-  about: object
-  changelog: object
+  settings: object;
+  about: object;
+  changelog: object;
 }
-export type TabOptions = keyof InnerTabOptions | "lore" | "stats" | "achieve"
+export type TabOptions = keyof InnerTabOptions | "lore" | "stats" | "achieve";
 export type InnerTabOptions = {
-  business: keyof BUSINESS_TAB_LIST,
-  options: keyof OPTIONS_TAB_LIST
+  business: keyof BUSINESS_TAB_LIST;
+  options: keyof OPTIONS_TAB_LIST;
 };

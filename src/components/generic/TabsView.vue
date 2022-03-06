@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { useStore } from "@/stores/main";
 import type { TabsType } from "@/stores/main/types";
-import type {TabOptions} from '@/stores/main/tabTypes'
+import type { TabOptions } from "@/stores/main/tabTypes";
 const store = useStore();
 defineProps<{
   tabList: TabsType[];

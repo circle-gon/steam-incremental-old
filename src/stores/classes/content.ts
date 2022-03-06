@@ -8,13 +8,13 @@ import type {
   SteamResourceType,
   StatTrackerType,
   OneTimeSteamUpgradeType,
-} from '../main/types';
-import { isOfType } from '../main/types';
-import { Resource } from './resource';
-import { OneTimeUpgrades } from './upgrades';
-import { StatTracker } from './trackers';
-import { getTime } from '../main/utils';
-import { useStore } from '@/stores/main';
+} from "../main/types";
+import { isOfType } from "../main/types";
+import { Resource } from "./resource";
+import { OneTimeUpgrades } from "./upgrades";
+import { StatTracker } from "./trackers";
+import { getTime } from "../main/utils";
+import { useStore } from "@/stores/main";
 class Steam implements SteamType {
   steam: ResourceType;
   water: ResourceQueueType;
@@ -36,19 +36,19 @@ class Steam implements SteamType {
     this.fill = new Resource({ req: 1 }) as ResourceQueueType;
     this.isDoing = false;
     this.timestamp = getTime();
-    this.statTracker = new StatTracker(['steam']);
+    this.statTracker = new StatTracker(["steam"]);
     this.oneUpgrades = {
       stronger: new OneTimeUpgrades(
-        'Getting stronger!',
-        'Multiplies speed of all resources by 2',
+        "Getting stronger!",
+        "Multiplies speed of all resources by 2",
         1,
         1,
         () => true,
         baseConfig
       ),
       auto: new OneTimeUpgrades(
-        'No one likes working!',
-        'Automaticially fills the furnace based on your steam',
+        "No one likes working!",
+        "Automaticially fills the furnace based on your steam",
         5,
         1,
         () => {
@@ -62,7 +62,7 @@ class Steam implements SteamType {
   updateResources() {
     const isDoingAttr = [];
     for (const value of Object.values(this)) {
-      if (isOfType<ResourceQueueType>(value, 'c')) {
+      if (isOfType<ResourceQueueType>(value, "c")) {
         value.update();
         isDoingAttr.push(value.queue.length > 0);
       }

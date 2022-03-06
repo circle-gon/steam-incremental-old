@@ -6,8 +6,8 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "module": "esnext",
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "types": ["node"],
     "lib": ["ESNext"]
   },

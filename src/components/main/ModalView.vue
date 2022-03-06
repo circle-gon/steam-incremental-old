@@ -14,7 +14,7 @@ import { getComputedTab } from "../../stores/main/compUtils";
 const store = useStore();
 const modal = computed((): null | object => {
   if (store.modal !== "") {
-    throw new Error("modals do not exist")
+    throw new Error("modals do not exist");
     //return getComputedTab(store.modal, {});
   }
   return null;
