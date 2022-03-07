@@ -65,10 +65,12 @@ export interface ResourceType {
   multi: number;
   update: () => void;
   addNewQueue: (drain: number) => void;
-  req?: number;
-  k?: number;
-  c?: number;
-  queue?: QueueType[];
+  queueData?: {
+  req: number;
+  k: number;
+  c: number;
+  queue: QueueType[];
+  }
 }
 export type ResourceQueueType = Required<ResourceType>;
 export interface ResourceInputType {

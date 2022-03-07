@@ -1,47 +1,47 @@
-import { R, isUndef, getTime } from "../main/utils";
-import type { ResourceInputType, QueueType, ResourceType } from "../main/types";
-import { isOfType } from "../main/types";
+import { R, isUndef, getTime } from '../main/utils';
+import type { ResourceInputType, QueueType, ResourceType } from '../main/types';
+import { isOfType } from '../main/types';
 class Resource implements ResourceType {
   owned: number;
   multi: number;
-  req?: number;
-  k?: number;
-  c?: number;
-  queue?: QueueType[];
+  queueData?: {
+    req: number;
+    k: number;
+    c: number;
+    queue: QueueType[];
+  };
   constructor(obj: ResourceInputType = {}) {
     this.owned = R(obj.owned, 0);
     this.multi = R(obj.multi, 1);
     // req to max
     // left to drain
-    if (!isUndef(obj.req)) {
-      this.req = obj.req;
-      this.k = 1;
-      this.c = 5;
-      this.queue = [];
+    if (obj.req !== undefined) {
+      this.queueData = {
+        req: obj.req,
+        k: 1,
+        c: 5,
+        queue: [],
+      };
     }
   }
 
   addNewQueue(drainAmt: number) {
-    if (
-      this.queue &&
-      typeof this.k === "number" &&
-      typeof this.c === "number"
-    ) {
-      this.queue.push({
+    if (this.queueData) {
+      this.queueData.queue.push({
         remain: drainAmt,
         onStart: drainAmt,
         time: getTime(),
-        drainFactor: this.k,
-        c: this.c,
+        drainFactor: this.queueData.k,
+        c: this.queueData.c,
         lastRemain: 0,
       });
     }
   }
 
   update() {
-    if (this.queue && typeof this.req === "number") {
-      for (const [num, data] of this.queue.entries()) {
-        if (isOfType<QueueType>(data, "c")) {
+    if (this.queueData) {
+      for (const [num, data] of this.queueData.queue.entries()) {
+        if (isOfType<QueueType>(data, 'c')) {
           data.lastRemain = data.remain;
           data.remain =
             ((data.onStart * (data.c + 1)) / data.c) *
@@ -54,12 +54,12 @@ class Resource implements ResourceType {
           // (c+1)/c because of start errors
           // now todo: figure out c and k's effect on result
           this.owned += data.lastRemain - data.remain;
-          if (this.owned > this.req) {
-            this.queue = [];
-            this.owned = this.req;
+          if (this.owned > this.queueData.req) {
+            this.queueData.queue = [];
+            this.owned = this.queueData.req;
           } else if (data.remain < 0.01) {
             this.owned += data.remain;
-            this.queue.splice(num, 1);
+            this.queueData.queue.splice(num, 1);
           }
         }
       }

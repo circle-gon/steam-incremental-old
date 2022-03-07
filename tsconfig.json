@@ -7,9 +7,18 @@
       "@/*": ["./src/*"]
     },
     "module": "ESNext",
-    "moduleResolution": "node",
-    "lib": ["ESNext"],
-    "noEmit": true
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "useDefineForClassFields": true,
+    "jsx": "preserve",
+    "strict": true,
+    "isolatedModules": true,
+    "preserveValueImports": true,
+    "importsNotUsedAsValues": "error",
+    "target": "ESNext",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
   },
 
   "references": [

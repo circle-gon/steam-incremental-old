@@ -62,16 +62,16 @@ class Steam implements SteamType {
   updateResources() {
     const isDoingAttr = [];
     for (const value of Object.values(this)) {
-      if (isOfType<ResourceQueueType>(value, "c")) {
+      if (isOfType<ResourceQueueType>(value, "queueData")) {
         value.update();
-        isDoingAttr.push(value.queue.length > 0);
+        isDoingAttr.push(value.queueData.queue.length > 0);
       }
     }
     this.isDoing = isDoingAttr.includes(true);
   }
   getResource(res: SteamResourceType) {
     const value = this[res];
-    if (value.queue.length === 0 && !this.isDoing && value.owned < value.req) {
+    if (value.queueData.queue.length === 0 && !this.isDoing && value.owned < value.queueData.req) {
       value.addNewQueue(value.multi);
       this.isDoing = true;
     }
@@ -82,9 +82,9 @@ class Steam implements SteamType {
     this.water.multi = 1 + OneTimeUpgrades.use(this.oneUpgrades.stronger);
   }
   updateFurnace() {
-    if (this.fill.owned >= this.fill.req && this.heat.owned >= this.heat.req) {
-      this.fill.owned -= this.fill.req;
-      this.heat.owned -= this.heat.req;
+    if (this.fill.owned >= this.fill.queueData.req && this.heat.owned >= this.heat.queueData.req) {
+      this.fill.owned -= this.fill.queueData.req;
+      this.heat.owned -= this.heat.queueData.req;
       this.steam.owned += this.steam.multi;
     }
   }

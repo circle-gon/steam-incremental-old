@@ -47,7 +47,7 @@ export const useStore = defineStore("main", {
       const realRes = store[res];
       const inner = realRes[innerRes];
       return (
-        inner.queue.length === 0 && !realRes.isDoing && inner.owned < inner.req
+        inner.queueData.queue.length === 0 && !realRes.isDoing && inner.owned < inner.queueData.req
       );
     },
     getSave(): string {
