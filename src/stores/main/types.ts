@@ -1,11 +1,38 @@
-// upgrade type, lore type, tabs type
-import type { TabOptions } from "./tabTypes";
+import type { TabOptionsType, InnerTabOptionsType } from './tabTypes';
+
+// util types
 export type FilteredKeys<T, U> = {
   [P in keyof T]: T[P] extends U ? P : never;
 }[keyof T];
 export function isOfType<T>(test: T, prop: keyof T): test is T {
   return (test as T)[prop] !== undefined;
 }
+
+// unexported types
+interface CoreUpgradeType {
+  name: string;
+  desc: string;
+  isUnlocked: () => boolean;
+  layer: number;
+  level: number;
+  maxLevel: number;
+  isUnbuyable: () => boolean;
+  getCurrentPrice: () => number;
+  getPriceDisplay: () => string;
+  isMaxLevel: () => boolean;
+  getCurrency: () => number;
+  getResource: () => string;
+  buy: () => void;
+  hasBought: () => boolean;
+}
+interface CoreTabsType {
+  display: string;
+  actual: string;
+  shown: () => boolean;
+  lore?: LoreType[];
+  buttons?: Array<RealSettingButtonType | undefined>[];
+}
+
 export type SteamResourceType = FilteredKeys<SteamType, ResourceQueueType>;
 export interface SteamType {
   steam: ResourceType;
@@ -66,22 +93,6 @@ export interface ConfigType {
 export interface OneTimeConfigType {
   layer: number;
 }
-interface CoreUpgradeType {
-  name: string;
-  desc: string;
-  isUnlocked: () => boolean;
-  layer: number;
-  level: number;
-  maxLevel: number;
-  isUnbuyable: () => boolean;
-  getCurrentPrice: () => number;
-  getPriceDisplay: () => string;
-  isMaxLevel: () => boolean;
-  getCurrency: () => number;
-  getResource: () => string;
-  buy: () => void;
-  hasBought: () => boolean;
-}
 export interface UpgradeType extends CoreUpgradeType {
   getPrice: (level: number) => number;
   getEffect: (level: number) => number;
@@ -121,16 +132,12 @@ export interface StatTrackerType {
   resources: TrackType;
   update: (content: ContentType) => void;
 }
-interface CoreTabsType {
-  display: string;
-  actual: string;
-  shown: () => boolean;
-  lore?: LoreType[];
-  buttons?: Array<RealSettingButtonType | undefined>[];
-  subtabs?: CoreTabsType[];
+export interface InnerTabsType extends CoreTabsType {
+  actual: InnerTabOptionsType;
 }
 export interface TabsType extends CoreTabsType {
-  actual: TabOptions;
+  actual: TabOptionsType;
+  subtabs: InnerTabsType[] | [];
 }
 export interface InputType {
   min: number;
@@ -150,12 +157,12 @@ export interface AchievementTrackerType {
   hasAchieve: (row: number, col: number) => boolean;
 }
 export interface SettingButtonType {
-  type: "button";
+  type: 'button';
   display: () => string | null;
   do: () => void;
 }
 export interface SettingButtonInputType {
-  type: "input";
+  type: 'input';
   display: () => string | null;
   doInput: (value: number) => void;
   other: InputType;

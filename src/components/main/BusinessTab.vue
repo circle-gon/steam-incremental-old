@@ -9,13 +9,13 @@
 import { getSubtabs, getComputedTab } from "@/stores/main/compUtils";
 import { useStore } from "@/stores/main";
 import { computed } from "vue";
-import type { BUSINESS_TAB_LIST } from "@/stores/main/tabTypes";
+import type { BUSINESS_TAB_LIST_TYPE } from "@/stores/main/tabTypes";
 import TabsView from "../generic/TabsView.vue";
 import SteamSubtab from "../subtabs/SteamSubtab.vue";
 import WorkerSubtab from "../subtabs/WorkerSubtab.vue";
 const store = useStore();
 const tabs = getSubtabs("business");
-const TABS_LIST: BUSINESS_TAB_LIST = {
+const TABS_LIST: BUSINESS_TAB_LIST_TYPE = {
   workers: WorkerSubtab,
   steam: SteamSubtab,
 };

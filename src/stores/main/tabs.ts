@@ -47,6 +47,7 @@ const TABS: TabsType[] = [
     shown() {
       return true;
     },
+    subtabs: [],
   },
   {
     display: "Achievements",
@@ -54,6 +55,7 @@ const TABS: TabsType[] = [
     shown() {
       return true;
     },
+    subtabs: [],
   },
   {
     display: "Lore",
@@ -79,6 +81,7 @@ const TABS: TabsType[] = [
     shown() {
       return true;
     },
+    subtabs: [],
   },
   {
     display: "Options",

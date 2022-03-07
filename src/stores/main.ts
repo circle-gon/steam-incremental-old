@@ -1,39 +1,39 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia';
 import type {
   SteamResourceType,
   NotificationType,
   GenericObjectType,
   BasicType,
   WithUpgradesType,
-} from "./main/types";
-import type { TabOptions, InnerTabOptions } from "./main/tabTypes";
-import { Steam } from "./classes/content";
-import { getTime, copy } from "./main/utils";
-import { AchievementTracker, StatTracker } from "./classes/trackers";
-import { Upgrades } from "./classes/upgrades";
-import { Resource } from "./classes/resource";
-import { Keypress } from "./classes/keypress";
-import LZString from "lz-string";
-export const useStore = defineStore("main", {
+} from './main/types';
+import type { TabOptionsType, InnerTabOptionsListType } from './main/tabTypes';
+import { Steam } from './classes/content';
+import { getTime, copy } from './main/utils';
+import { AchievementTracker, StatTracker } from './classes/trackers';
+import { Upgrades } from './classes/upgrades';
+import { Resource } from './classes/resource';
+import { Keypress } from './classes/keypress';
+import LZString from 'lz-string'
+export const useStore = defineStore('main', {
   state: () => ({
     steam: new Steam(),
-    tab: "business" as TabOptions,
+    tab: 'business' as TabOptionsType,
     innerTabs: {
-      business: "steam",
-      options: "settings",
-    } as InnerTabOptions,
+      business: 'steam',
+      options: 'settings',
+    } as InnerTabOptionsListType,
     stats: {
       totalTimePlayed: 0,
       achievements: new AchievementTracker(),
     },
     keypresses: new Keypress(),
-    modal: "",
+    modal: '',
     notifications: [] as NotificationType[],
     internals: {
       timestamp: getTime(),
       rafID: 0,
       fps: 0,
-      save: "",
+      save: '',
       lastSaveTimer: getTime(),
     },
     settings: {
@@ -43,7 +43,7 @@ export const useStore = defineStore("main", {
     },
   }),
   getters: {
-    isUseable: (store) => (res: "steam", innerRes: SteamResourceType) => {
+    isUseable: (store) => (res: 'steam', innerRes: SteamResourceType) => {
       const realRes = store[res];
       const inner = realRes[innerRes];
       return (
@@ -55,13 +55,13 @@ export const useStore = defineStore("main", {
       const replacer = function (key: string, data: any) {
         if (
           [
-            "internals",
-            "tab",
-            "innerTabs",
-            "developer",
-            "notifications",
-            "modal",
-            "keypresses",
+            'internals',
+            'tab',
+            'innerTabs',
+            'developer',
+            'notifications',
+            'modal',
+            'keypresses',
           ].includes(key)
         )
           return undefined;
@@ -70,10 +70,10 @@ export const useStore = defineStore("main", {
           return data;
         }
         if (data instanceof StatTracker) {
-          return copy(data as unknown as GenericObjectType, ["resList"], false);
+          return copy(data as unknown as GenericObjectType, ['resList'], false);
         }
         if (data instanceof Upgrades) {
-          return copy(data as unknown as GenericObjectType, ["level"], true);
+          return copy(data as unknown as GenericObjectType, ['level'], true);
         }
         if (data instanceof Resource) {
           return data;
@@ -105,7 +105,7 @@ export const useStore = defineStore("main", {
         }
         // if rebuyable upgrades exist
         //return upg[data.oneTime ? "oneUpgrades" : "upgrades"][data.name]
-        return upg["oneUpgrades"][data.name];
+        return upg['oneUpgrades'][data.name];
       },
   },
   actions: {
@@ -113,7 +113,7 @@ export const useStore = defineStore("main", {
       const upg = this.getUpg(data);
       if (!data.oneTime) {
         //upg.upgrades[data.name].buy();
-        console.error("No multi-buy steam upgrades");
+        console.error('No multi-buy steam upgrades');
       } else {
         upg.buy();
       }
@@ -160,28 +160,28 @@ export const useStore = defineStore("main", {
     hardReset() {
       if (
         !confirm(
-          "Are you sure to do this? This will wipe all of your progress!"
+          'Are you sure to do this? This will wipe all of your progress!'
         )
       ) {
         return;
       }
       this.$reset();
-      this.notify("Succesful hard reset.");
+      this.notify('Succesful hard reset.');
     },
     saveGame() {
-      localStorage.setItem("sgsave", this.getSave);
-      this.notify("Game saved.");
+      localStorage.setItem('sgsave', this.getSave);
+      this.notify('Game saved.');
     },
     loadSave() {
       const performSaveImport = (cache?: {
         stack: Array<string | number>;
         data: BasicType;
       }) => {
-        if (typeof cache === "undefined") {
-          let loadedSave = "";
+        if (typeof cache === 'undefined') {
+          let loadedSave = '';
           const saveToImport = this.internals.save
             ? this.internals.save
-            : localStorage.getItem("sgsave");
+            : localStorage.getItem('sgsave');
           if (!saveToImport) return;
           try {
             loadedSave = JSON.parse(
@@ -190,16 +190,16 @@ export const useStore = defineStore("main", {
           } catch (e) {
             // validation of save
             console.error(e);
-            this.notify("An error occured while importing your save.");
+            this.notify('An error occured while importing your save.');
             return;
           }
           // this didn't happen but just in case
           if (loadedSave === null) {
-            this.notify("Save is empty or is invalid.");
+            this.notify('Save is empty or is invalid.');
             return;
           }
           performSaveImport({ stack: [], data: loadedSave });
-        } else if (typeof cache.data === "object" && cache.data !== null) {
+        } else if (typeof cache.data === 'object' && cache.data !== null) {
           const toIter = Array.isArray(cache.data)
             ? cache.data.entries()
             : Object.entries(cache.data);
@@ -212,10 +212,10 @@ export const useStore = defineStore("main", {
             });
           }
         } else {
-          let getString = "";
+          let getString = '';
           cache.stack.forEach((item: number | string) => {
             const strToPut =
-              typeof item === "number" ? `[${item}]` : `.${item}`;
+              typeof item === 'number' ? `[${item}]` : `.${item}`;
             getString += strToPut;
           });
           // a workaround for now
@@ -226,9 +226,9 @@ export const useStore = defineStore("main", {
             cache.data = Infinity;
           }
           Function(
-            "state",
-            "data",
-            "state" + getString + "=data"
+            'state',
+            'data',
+            'state' + getString + '=data'
           )(this, cache.data);
         }
       };
