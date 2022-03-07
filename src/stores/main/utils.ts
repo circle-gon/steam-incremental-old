@@ -54,10 +54,6 @@ const getTime = function () {
 const isUndef = function <T>(item: T | undefined) {
   return item === undefined;
 };
-const ifUndefThrow = function <T>(item: T | undefined, message: string) {
-  if (isUndef(item)) throw new Error(message);
-  return item;
-};
 const R = function <Type, OtherType>(
   item: Type | undefined,
   replacer: OtherType
@@ -76,12 +72,4 @@ const copy = function (v: GenericObjectType, keys: string[], isInclude = true) {
   }
   return r;
 };
-export {
-  displayNumber,
-  prettyTimeAsTotal,
-  getTime,
-  isUndef,
-  R,
-  copy,
-  ifUndefThrow,
-};
+export { displayNumber, prettyTimeAsTotal, getTime, isUndef, R, copy };

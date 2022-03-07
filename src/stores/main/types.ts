@@ -1,4 +1,4 @@
-import type { TabOptionsType, InnerTabOptionsType } from './tabTypes';
+import type { TabOptionsType, InnerTabOptionsType } from "./tabTypes";
 
 // util types
 export type FilteredKeys<T, U> = {
@@ -157,12 +157,12 @@ export interface AchievementTrackerType {
   hasAchieve: (row: number, col: number) => boolean;
 }
 export interface SettingButtonType {
-  type: 'button';
+  type: "button";
   display: () => string | null;
   do: () => void;
 }
 export interface SettingButtonInputType {
-  type: 'input';
+  type: "input";
   display: () => string | null;
   doInput: (value: number) => void;
   other: InputType;

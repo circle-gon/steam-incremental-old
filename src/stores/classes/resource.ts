@@ -1,6 +1,6 @@
-import { R, isUndef, getTime } from '../main/utils';
-import type { ResourceInputType, QueueType, ResourceType } from '../main/types';
-import { isOfType } from '../main/types';
+import { R, isUndef, getTime } from "../main/utils";
+import type { ResourceInputType, QueueType, ResourceType } from "../main/types";
+import { isOfType } from "../main/types";
 class Resource implements ResourceType {
   owned: number;
   multi: number;
@@ -24,8 +24,8 @@ class Resource implements ResourceType {
   addNewQueue(drainAmt: number) {
     if (
       this.queue &&
-      typeof this.k === 'number' &&
-      typeof this.c === 'number'
+      typeof this.k === "number" &&
+      typeof this.c === "number"
     ) {
       this.queue.push({
         remain: drainAmt,
@@ -39,9 +39,9 @@ class Resource implements ResourceType {
   }
 
   update() {
-    if (this.queue && typeof this.req === 'number') {
+    if (this.queue && typeof this.req === "number") {
       for (const [num, data] of this.queue.entries()) {
-        if (isOfType<QueueType>(data, 'c')) {
+        if (isOfType<QueueType>(data, "c")) {
           data.lastRemain = data.remain;
           data.remain =
             ((data.onStart * (data.c + 1)) / data.c) *
