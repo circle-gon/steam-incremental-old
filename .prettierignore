@@ -8,8 +8,4 @@
 # ... or these files in root
 !.eslintrc.cjs
 !env.d.ts
-!index.html
-!package.json
-!tsconfig.json
-!tsconfig.vite-config.json
 !vite.config.ts

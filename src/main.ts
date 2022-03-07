@@ -4,8 +4,7 @@ import { useStore } from "./stores/main";
 import App from "./App.vue";
 
 createApp(App).use(createPinia()).mount("#app");
-window.addEventListener("keydown", (e) => {
-  const store = useStore();
+window.addEventListener("keydown", (e) => { const store = useStore();
   store.keypresses.keydown(e);
 });
 window.addEventListener("keyup", (e) => {
