@@ -21,10 +21,10 @@
     </button>
     <div>
       Heat in furnace: {{ displayNumber(steam.heat.owned) }}/{{
-        displayNumber(steam.heat.req)
+        displayNumber(steam.heat.queueData.req)
       }}<br />
       Water in furnace: {{ displayNumber(steam.fill.owned) }}/{{
-        displayNumber(steam.fill.req)
+        displayNumber(steam.fill.queueData.req)
       }}
     </div>
     <!--<upgrade-button
@@ -45,15 +45,15 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useStore } from "@/stores/main";
-import { computed } from "vue";
-import UpgradeButton from "../generic/UpgradeButton.vue";
-import { displayNumber } from "@/stores/main/utils";
-import type { SteamResourceType } from "@/stores/main/types";
+import { useStore } from '@/stores/main';
+import { computed } from 'vue';
+import UpgradeButton from '../generic/UpgradeButton.vue';
+import { displayNumber } from '@/stores/main/utils';
+import type { SteamResourceType } from '@/stores/main/types';
 const store = useStore();
 const steam = computed(() => store.steam);
 const isUseable = (otherRes: SteamResourceType) =>
-  store.isUseable("steam", otherRes);
+  store.isUseable('steam', otherRes);
 const getResource = (res: SteamResourceType) => {
   store.steam.getResource(res);
 };

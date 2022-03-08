@@ -18,7 +18,8 @@
     "target": "ESNext",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "lib": ["ESNext"]
   },
 
   "references": [
