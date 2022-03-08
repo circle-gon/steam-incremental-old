@@ -1,4 +1,5 @@
-import type { GenericObjectType } from "./types";
+import type { GenericObjectType } from './types';
+import { REPLACE_PATH as RP } from './types';
 // number display
 const displayNumber = function (what: number, prec = 2, overide = false) {
   // if number is interger, display it as whole
@@ -17,32 +18,32 @@ const displayNumber = function (what: number, prec = 2, overide = false) {
 // time formatting
 const prettyTimeAsTotal = function (data: number) {
   let remain;
-  const timesList = ["seconds", "minutes", "hours", "days"];
+  const timesList = ['seconds', 'minutes', 'hours', 'days'];
   const text = [];
   const milliLeft = data % 1000;
   data = (data - milliLeft) / 1000;
   remain = data % 60;
   data = (data - remain) / 60;
-  text.push((remain + milliLeft / 1000).toFixed(2) + " seconds");
+  text.push((remain + milliLeft / 1000).toFixed(2) + ' seconds');
   if (data >= 60) {
     remain = data % 60;
     data = (data - remain) / 60;
-    text.push(remain + " minutes");
+    text.push(remain + ' minutes');
   }
   if (data >= 60 && text.length === 2) {
     remain = data % 60;
     data = (data - remain) / 60;
-    text.push(remain + " hours");
+    text.push(remain + ' hours');
   }
   if (data !== 0) {
-    text.push(data + " " + timesList[text.length]);
+    text.push(data + ' ' + timesList[text.length]);
   }
-  const extraText = text.length > 1 ? ", and " : "";
+  const extraText = text.length > 1 ? ', and ' : '';
   return (
     text
       .reverse()
       .slice(0, text.length - 1)
-      .join(", ") +
+      .join(', ') +
     extraText +
     text[text.length - 1]
   );
@@ -60,6 +61,11 @@ const R = function <Type, OtherType>(
 ) {
   return item !== undefined ? item : replacer;
 };
+const inRP = function (name: string) {
+  const val = RP.find((element) => name.match(`.${element}`));
+  if (val === undefined) return val
+  return `.${val}`
+};
 const copy = function (v: GenericObjectType, keys: string[], isInclude = true) {
   const r: GenericObjectType = {};
   for (const k in v) {
@@ -72,4 +78,4 @@ const copy = function (v: GenericObjectType, keys: string[], isInclude = true) {
   }
   return r;
 };
-export { displayNumber, prettyTimeAsTotal, getTime, isUndef, R, copy };
+export { displayNumber, prettyTimeAsTotal, getTime, isUndef, R, copy, inRP };

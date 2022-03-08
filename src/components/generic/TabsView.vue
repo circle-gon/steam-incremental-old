@@ -19,7 +19,6 @@
 <script setup lang="ts">
 import { useStore } from '@/stores/main';
 import type { TabsType, InnerTabsType } from '@/stores/main/types';
-import { isOfType } from '@/stores/main/types';
 import type {
   TabOptionsType,
   InnerTabKeysType,

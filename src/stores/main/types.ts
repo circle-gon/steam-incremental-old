@@ -20,7 +20,7 @@ interface CoreUpgradeType {
   getCurrentPrice: () => number;
   getPriceDisplay: () => string;
   isMaxLevel: () => boolean;
-  getCurrency: () => number;
+  getStore: () => {owned: number};
   getResource: () => string;
   buy: () => void;
   hasBought: () => boolean;
@@ -32,7 +32,7 @@ interface CoreTabsType {
   lore?: LoreType[];
   buttons?: Array<RealSettingButtonType | undefined>[];
 }
-
+export const REPLACE_PATH = ["steam"]
 export type SteamResourceType = FilteredKeys<SteamType, ResourceQueueType>;
 export interface SteamType {
   steam: ResourceType;

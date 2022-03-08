@@ -1,4 +1,4 @@
-import { R, isUndef, getTime } from '../main/utils';
+import { R, getTime } from '../main/utils';
 import type { ResourceInputType, QueueType, ResourceType } from '../main/types';
 import { isOfType } from '../main/types';
 class Resource implements ResourceType {

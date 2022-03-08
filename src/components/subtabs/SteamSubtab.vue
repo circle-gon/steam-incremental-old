@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>You have {{ displayNumber(steam.water.owned) }} water.</div>
+    <div>You have {{ displayNumber(store.water.owned) }} water.</div>
     <button
       :class="{ useable: isUseable('fill') }"
       @click="getResource('fill')"
@@ -20,11 +20,11 @@
       Get 1 Water
     </button>
     <div>
-      Heat in furnace: {{ displayNumber(steam.heat.owned) }}/{{
-        displayNumber(steam.heat.queueData.req)
+      Heat in furnace: {{ displayNumber(store.heat.owned) }}/{{
+        displayNumber(store.heat.queueData.req)
       }}<br />
-      Water in furnace: {{ displayNumber(steam.fill.owned) }}/{{
-        displayNumber(steam.fill.queueData.req)
+      Water in furnace: {{ displayNumber(store.fill.owned) }}/{{
+        displayNumber(store.fill.queueData.req)
       }}
     </div>
     <!--<upgrade-button
@@ -36,7 +36,7 @@
     />-->
     <div>Upgrades:</div>
     <upgrade-button
-      v-for="(upgrade, i) in steam.oneUpgrades"
+      v-for="(upgrade, i) in store.oneUpgrades"
       :key="upgrade.name"
       :upgrade="upgrade"
       :upg-id="i"
@@ -45,16 +45,13 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useStore } from '@/stores/main';
-import { computed } from 'vue';
+import { useSteamStore } from '@/stores/steam';
 import UpgradeButton from '../generic/UpgradeButton.vue';
 import { displayNumber } from '@/stores/main/utils';
 import type { SteamResourceType } from '@/stores/main/types';
-const store = useStore();
-const steam = computed(() => store.steam);
-const isUseable = (otherRes: SteamResourceType) =>
-  store.isUseable('steam', otherRes);
+const store = useSteamStore();
+const isUseable = (otherRes: SteamResourceType) => store.isUseable(otherRes);
 const getResource = (res: SteamResourceType) => {
-  store.steam.getResource(res);
+  store.getResource(res);
 };
 </script>

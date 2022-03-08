@@ -1,12 +1,13 @@
 // upgrades n stuff for most of the game
-import { R } from "../main/utils";
-import { useStore } from "../main";
+import { R } from '../main/utils';
+import { useStore } from '../main';
+import { useSteamStore } from '../steam';
 import type {
   ConfigType,
   UpgradeType,
   OneTimeUpgradeType,
   OneTimeConfigType,
-} from "../main/types";
+} from '../main/types';
 class Upgrades implements UpgradeType {
   name: string;
   desc: string;
@@ -39,7 +40,7 @@ class Upgrades implements UpgradeType {
   }
 
   getPriceDisplay() {
-    return this.getCurrentPrice() + " " + this.getResource();
+    return this.getCurrentPrice() + ' ' + this.getResource();
   }
 
   isMaxLevel() {
@@ -50,20 +51,19 @@ class Upgrades implements UpgradeType {
     return this.level > 0;
   }
 
-  getCurrency() {
-    const store = useStore();
-    const res = store.steam.steam;
+  getStore() {
+    let curr: { owned: number } = { owned: 0 };
     switch (this.layer) {
       case 1:
-        break;
+        curr = useSteamStore().steam;
       default:
         break;
     }
-    return res.owned;
+    return curr;
   }
 
   getResource() {
-    const res = "steam";
+    const res = 'steam';
     switch (this.layer) {
       default:
         break;
@@ -72,18 +72,18 @@ class Upgrades implements UpgradeType {
   }
 
   isUnbuyable() {
-    const res = this.getCurrency();
+    const res = this.getStore();
     if (this.isMaxLevel()) return true;
-    return res < this.getCurrentPrice();
+    return res.owned < this.getCurrentPrice();
   }
 
   buy() {
-    const store = useStore();
+    const store = this.getStore();
     const price = this.getCurrentPrice();
-    if (price <= this.getCurrency() && !this.isMaxLevel()) {
+    if (price <= this.getStore().owned && !this.isMaxLevel()) {
       switch (this.layer) {
         case 1:
-          store.steam.steam.owned -= price;
+          store.owned -= price;
           break;
         default:
           break;

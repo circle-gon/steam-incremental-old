@@ -7,8 +7,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useStore } from "@/stores/main";
+import { useSteamStore } from "@/stores/steam";
+import {useStore} from '@/stores/main'
 import { prettyTimeAsTotal } from "@/stores/main/utils";
-const store = useStore();
-const tracked = store.steam.statTracker.resources;
+const steamStore = useSteamStore();
+const store = useStore()
+const tracked = steamStore.statTracker.resources;
 </script>

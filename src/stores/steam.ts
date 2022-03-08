@@ -1,9 +1,10 @@
-import { defineStore } from 'pinia';
+import { defineStore, acceptHMRUpdate } from 'pinia';
 import { Resource } from './classes/resource';
 import type {
   ResourceQueueType,
   ConfigType,
   SteamResourceType,
+  BasicType,
 } from './main/types';
 import { isOfType } from './main/types';
 import { StatTracker } from './classes/trackers';
@@ -96,6 +97,15 @@ export const useSteamStore = defineStore('steam', {
         this.steam.owned += this.steam.multi;
       }
     },
+    loadSaveFromString(path: string, data: BasicType) {
+      if (path.match(/queue/gi)) {
+        return;
+      }
+      if (path.match(/.water.req/gi)) {
+        data = Infinity;
+      }
+      Function('state', 'data', 'state' + path + '=data')(this, data);
+    },
     update() {
       this.timestamp = getTime();
       this.updateMulti();
@@ -105,3 +115,6 @@ export const useSteamStore = defineStore('steam', {
     },
   },
 });
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useSteamStore, import.meta.hot));
+}
