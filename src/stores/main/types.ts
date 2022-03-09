@@ -33,26 +33,7 @@ interface CoreTabsType {
   buttons?: Array<RealSettingButtonType | undefined>[];
 }
 export const REPLACE_PATH = ["steam"]
-export type SteamResourceType = FilteredKeys<SteamType, ResourceQueueType>;
-export interface SteamType {
-  steam: ResourceType;
-  heat: ResourceQueueType;
-  water: ResourceQueueType;
-  fill: ResourceQueueType;
-  isDoing: boolean;
-  getResource: (res: SteamResourceType) => void;
-  updateResources: () => void;
-  updateFurnace: () => void;
-  update: () => void;
-  updateMulti: () => void;
-  statTracker: StatTrackerType;
-  timestamp: number;
-  //upgrades: SteamUpgradeType;
-  oneUpgrades: OneTimeSteamUpgradeType;
-}
-export interface WithUpgradesType {
-  oneUpgrades: OneTimeSteamUpgradeType;
-}
+export type SteamResourceType = "heat" | "water" | "fill"
 export interface AchievementType {
   desc: string;
   hoverText: string;
@@ -112,11 +93,9 @@ export type BasicType =
   | boolean
   | { [key: string]: BasicType }
   | BasicType[];
-export interface SteamUpgradeType {
-  [key: string]: UpgradeType;
-}
 export interface OneTimeSteamUpgradeType {
-  [key: string]: OneTimeUpgradeType;
+  stronger: OneTimeUpgradeType;
+  auto: OneTimeUpgradeType;
 }
 export interface TrackType {
   [key: string]: {

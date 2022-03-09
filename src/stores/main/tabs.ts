@@ -1,6 +1,6 @@
 import type { TabsType, AchievementType } from './types';
 import { useSteamStore } from '../steam';
-import {useStore} from '../main'
+import { useStore } from '../main';
 import { Achievement } from '../classes/achievements';
 
 const ACHIEVEMENTS: AchievementType[][] = [

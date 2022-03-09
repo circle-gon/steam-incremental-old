@@ -3,6 +3,7 @@ import type {
   NotificationType,
   GenericObjectType,
   BasicType,
+  OneTimeSteamUpgradeType
 } from './main/types';
 import type { TabOptionsType, InnerTabOptionsListType } from './main/tabTypes';
 import { getTime, copy, inRP } from './main/utils';
@@ -90,13 +91,16 @@ export const useStore = defineStore('main', {
   actions: {
     buyUpgrade(data: { name: string; layer: number; oneTime: boolean }) {
       const layer = this.getData(data.layer);
+      function isOneUpgrades (name: string, upgs: OneTimeSteamUpgradeType): name is keyof OneTimeSteamUpgradeType {
+        return name in upgs
+      }
       if (layer === undefined) {
         console.error('Invalid data.layer: ' + data.layer);
       } else {
         if (!data.oneTime) {
           //upg.upgrades[data.name].buy();
           console.error('No multi-buy steam upgrades');
-        } else {
+        } else if (isOneUpgrades(data.name, layer.oneUpgrades)) {
           layer.oneUpgrades[data.name].buy();
         }
       }

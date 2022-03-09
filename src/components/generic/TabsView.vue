@@ -38,7 +38,7 @@ const changeTab = (tab: TabOptionsType) => {
   store.tab = tab;
 };
 
-const changeInnerTab = (tab: unknown) => {
+const changeInnerTab = (tab: string) => {
   function isInInnerTabs(otab: string): otab is InnerTabKeysType {
     return otab in store.innerTabs;
   }
