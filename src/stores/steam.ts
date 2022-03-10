@@ -37,7 +37,7 @@ export const useSteamStore = defineStore('steam', {
       auto: new OneTimeUpgrades(
         'No one likes working!',
         'Automaticially fills the furnace based on your steam',
-        5,
+        3,
         1,
         () => {
           return false;
@@ -79,7 +79,7 @@ export const useSteamStore = defineStore('steam', {
       }
       this.isDoing = isDoingAttr.includes(false)
       if (OneTimeUpgrades.use(this.oneUpgrades.auto)) {
-        const multi = (this.steam.owned + 1) ** 0.2
+        const multi = (this.steam.owned + 1) ** 0.4 / 25
         this.heat.owned += this.heat.multi * multi * delta
         this.fill.owned += this.fill.multi * multi * delta
       }
