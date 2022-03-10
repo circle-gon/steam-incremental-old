@@ -56,7 +56,7 @@ export const useSteamStore = defineStore('steam', {
     isEmpty: (store) => (innerRes: SteamResourceType) => {
       const res = store[innerRes];
       return (
-        res.owned < res.queueData.req &&
+
         res.queueData.queue.find((element) => {
           return element.manual === true;
         }) === undefined
@@ -70,11 +70,14 @@ export const useSteamStore = defineStore('steam', {
       };
     },
     updateResources() {
-      for (const value of Object.values(this)) {
+      const isDoingAttr = []
+      for (const [key, value] of Object.entries(this)) {
         if (isOfType<ResourceQueueType>(value, 'queueData')) {
           value.update();
+          isDoingAttr.push(this.isEmpty(key))
         }
       }
+      this.isDoing = isDoingAttr.includes(false)
     },
     getResource(res: SteamResourceType) {
       const value = this[res];
@@ -91,8 +94,8 @@ export const useSteamStore = defineStore('steam', {
       this.fill.multi = 1 + OneTimeUpgrades.use(this.oneUpgrades.stronger);
       this.water.multi = 1 + OneTimeUpgrades.use(this.oneUpgrades.stronger);
       if (OneTimeUpgrades.use(this.oneUpgrades.auto)) {
-        this.heat.queueData.gainPerTick = linear;
-        this.fill.queueData.gainPerTick = linear;
+        this.heat.owned += this.heat.multi
+        this.water.owned += this.water.owned
       }
     },
     updateFurnace() {
