@@ -22,8 +22,10 @@ export const useStore = defineStore('main', {
     } as InnerTabOptionsListType,
     stats: {
       totalTimePlayed: 0,
+      // may replace with store
       achievements: new AchievementTracker(),
     },
+    // may replace with store
     keypresses: new Keypress(),
     modal: '',
     notifications: [] as NotificationType[],

@@ -10,6 +10,7 @@ import { isOfType } from './main/types';
 import { StatTracker } from './classes/trackers';
 import { getTime } from './main/utils';
 import { OneTimeUpgrades } from './classes/upgrades';
+import { linear } from './main/queue-gpt';
 
 const baseConfig: ConfigType = { layer: 1 };
 export const useSteamStore = defineStore('steam', {
@@ -46,12 +47,19 @@ export const useSteamStore = defineStore('steam', {
     },
   }),
   getters: {
-    isUseable: (store) => (innerRes: SteamResourceType) => {
-      const inner = store[innerRes];
+    isUseable() {
+      return (innerRes: SteamResourceType) => {
+        //console.log(this.isEmpty(innerRes))
+        return !this.isDoing && this.isEmpty(innerRes);
+      };
+    },
+    isEmpty: (store) => (innerRes: SteamResourceType) => {
+      const res = store[innerRes];
       return (
-        inner.queueData.queue.length === 0 &&
-        !store.isDoing &&
-        inner.owned < inner.queueData.req
+        res.owned < res.queueData.req &&
+        res.queueData.queue.find((element) => {
+          return element.manual === true;
+        }) === undefined
       );
     },
   },
@@ -62,14 +70,11 @@ export const useSteamStore = defineStore('steam', {
       };
     },
     updateResources() {
-      const isDoingAttr = [];
       for (const value of Object.values(this)) {
         if (isOfType<ResourceQueueType>(value, 'queueData')) {
           value.update();
-          isDoingAttr.push(value.queueData.queue.length > 0);
         }
       }
-      this.isDoing = isDoingAttr.includes(true);
     },
     getResource(res: SteamResourceType) {
       const value = this[res];
@@ -79,13 +84,16 @@ export const useSteamStore = defineStore('steam', {
         value.owned < value.queueData.req
       ) {
         value.addNewQueue(value.multi);
-        this.isDoing = true;
       }
     },
     updateMulti() {
       this.heat.multi = 1 + OneTimeUpgrades.use(this.oneUpgrades.stronger);
       this.fill.multi = 1 + OneTimeUpgrades.use(this.oneUpgrades.stronger);
       this.water.multi = 1 + OneTimeUpgrades.use(this.oneUpgrades.stronger);
+      if (OneTimeUpgrades.use(this.oneUpgrades.auto)) {
+        this.heat.queueData.gainPerTick = linear;
+        this.fill.queueData.gainPerTick = linear;
+      }
     },
     updateFurnace() {
       if (

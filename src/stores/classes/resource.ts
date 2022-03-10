@@ -1,6 +1,12 @@
 import { R, getTime } from '../main/utils';
-import type { ResourceInputType, QueueType, ResourceType } from '../main/types';
+import type {
+  ResourceInputType,
+  QueueType,
+  ResourceType,
+  GainType,
+} from '../main/types';
 import { isOfType } from '../main/types';
+import { upThenDown as defaultQueue } from '../main/queue-gpt';
 class Resource implements ResourceType {
   owned: number;
   multi: number;
@@ -9,6 +15,7 @@ class Resource implements ResourceType {
     k: number;
     c: number;
     queue: QueueType[];
+    gainPerTick: GainType;
   };
   constructor(obj: ResourceInputType = {}) {
     this.owned = R(obj.owned, 0);
@@ -21,11 +28,13 @@ class Resource implements ResourceType {
         k: 1,
         c: 5,
         queue: [],
+        gainPerTick:
+          obj.gainPerTick !== undefined ? obj.gainPerTick : defaultQueue,
       };
     }
   }
 
-  addNewQueue(drainAmt: number) {
+  addNewQueue(drainAmt: number, manual: boolean = true) {
     if (this.queueData) {
       this.queueData.queue.push({
         remain: drainAmt,
@@ -34,6 +43,7 @@ class Resource implements ResourceType {
         drainFactor: this.queueData.k,
         c: this.queueData.c,
         lastRemain: 0,
+        manual: manual,
       });
     }
   }
@@ -43,14 +53,7 @@ class Resource implements ResourceType {
       for (const [num, data] of this.queueData.queue.entries()) {
         if (isOfType<QueueType>(data, 'c')) {
           data.lastRemain = data.remain;
-          data.remain =
-            ((data.onStart * (data.c + 1)) / data.c) *
-            (1 -
-              1 /
-                (1 +
-                  data.c *
-                    Math.E **
-                      ((-data.drainFactor * (getTime() - data.time)) / 1000)));
+          data.remain = this.queueData.gainPerTick(data);
           // (c+1)/c because of start errors
           // now todo: figure out c and k's effect on result
           this.owned += data.lastRemain - data.remain;

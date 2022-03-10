@@ -1,4 +1,4 @@
-import type { TabOptionsType, InnerTabOptionsType } from "./tabTypes";
+import type { TabOptionsType, InnerTabOptionsType } from './tabTypes';
 
 // util types
 export type FilteredKeys<T, U> = {
@@ -20,7 +20,7 @@ interface CoreUpgradeType {
   getCurrentPrice: () => number;
   getPriceDisplay: () => string;
   isMaxLevel: () => boolean;
-  getStore: () => {owned: number};
+  getStore: () => { owned: number };
   getResource: () => string;
   buy: () => void;
   hasBought: () => boolean;
@@ -32,8 +32,8 @@ interface CoreTabsType {
   lore?: LoreType[];
   buttons?: Array<RealSettingButtonType | undefined>[];
 }
-export const REPLACE_PATH = ["steam"]
-export type SteamResourceType = "heat" | "water" | "fill"
+export const REPLACE_PATH = ['steam'];
+export type SteamResourceType = 'heat' | 'water' | 'fill';
 export interface AchievementType {
   desc: string;
   hoverText: string;
@@ -47,12 +47,14 @@ export interface ResourceType {
   update: () => void;
   addNewQueue: (drain: number) => void;
   queueData?: {
-  req: number;
-  k: number;
-  c: number;
-  queue: QueueType[];
-  }
+    req: number;
+    k: number;
+    c: number;
+    queue: QueueType[];
+    gainPerTick: GainType;
+  };
 }
+export type GainType = (data: QueueType) => number;
 export type ResourceQueueType = Required<ResourceType>;
 export interface ResourceInputType {
   owned?: number;
@@ -60,6 +62,7 @@ export interface ResourceInputType {
   req?: number;
   k?: number;
   c?: number;
+  gainPerTick?: GainType;
 }
 export interface QueueType {
   remain: number;
@@ -68,6 +71,7 @@ export interface QueueType {
   drainFactor: number;
   c: number;
   lastRemain: number;
+  manual: boolean;
 }
 export interface ConfigType {
   layer: number;
@@ -138,12 +142,12 @@ export interface AchievementTrackerType {
   hasAchieve: (row: number, col: number) => boolean;
 }
 export interface SettingButtonType {
-  type: "button";
+  type: 'button';
   display: () => string | null;
   do: () => void;
 }
 export interface SettingButtonInputType {
-  type: "input";
+  type: 'input';
   display: () => string | null;
   doInput: (value: number) => void;
   other: InputType;
