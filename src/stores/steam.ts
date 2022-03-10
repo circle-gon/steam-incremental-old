@@ -8,7 +8,7 @@ import type {
 } from './main/types';
 import { isOfType } from './main/types';
 import { StatTracker } from './classes/trackers';
-import { getTime } from './main/utils';
+import { getTime, getTimePassed } from './main/utils';
 import { OneTimeUpgrades } from './classes/upgrades';
 import { linear } from './main/queue-gpt';
 
@@ -53,10 +53,10 @@ export const useSteamStore = defineStore('steam', {
         return !this.isDoing && this.isEmpty(innerRes);
       };
     },
-    isEmpty: (store) => (innerRes: SteamResourceType) => {
+    isEmpty: (store) => (innerRes: SteamResourceType, notFull: boolean = true) => {
       const res = store[innerRes];
       return (
-
+        (notFull ? res.owned < res.queueData.req : true) && 
         res.queueData.queue.find((element) => {
           return element.manual === true;
         }) === undefined
@@ -69,15 +69,20 @@ export const useSteamStore = defineStore('steam', {
         return this.oneUpgrades.stronger.hasBought();
       };
     },
-    updateResources() {
+    updateResources(delta: number) {
       const isDoingAttr = []
       for (const [key, value] of Object.entries(this)) {
         if (isOfType<ResourceQueueType>(value, 'queueData')) {
           value.update();
-          isDoingAttr.push(this.isEmpty(key))
+          isDoingAttr.push(this.isEmpty(key, false))
         }
       }
       this.isDoing = isDoingAttr.includes(false)
+      if (OneTimeUpgrades.use(this.oneUpgrades.auto)) {
+        const multi = (this.steam.owned + 1) ** 0.2
+        this.heat.owned += this.heat.multi * multi * delta
+        this.fill.owned += this.fill.multi * multi * delta
+      }
     },
     getResource(res: SteamResourceType) {
       const value = this[res];
@@ -92,11 +97,7 @@ export const useSteamStore = defineStore('steam', {
     updateMulti() {
       this.heat.multi = 1 + OneTimeUpgrades.use(this.oneUpgrades.stronger);
       this.fill.multi = 1 + OneTimeUpgrades.use(this.oneUpgrades.stronger);
-      this.water.multi = 1 + OneTimeUpgrades.use(this.oneUpgrades.stronger);
-      if (OneTimeUpgrades.use(this.oneUpgrades.auto)) {
-        this.heat.owned += this.heat.multi
-        this.water.owned += this.water.owned
-      }
+      this.water.multi = 1 + OneTimeUpgrades.use(this.oneUpgrades.stronger)
     },
     updateFurnace() {
       if (
@@ -118,9 +119,10 @@ export const useSteamStore = defineStore('steam', {
       Function('state', 'data', 'state' + path + '=data')(this, data);
     },
     update() {
+      const delta = getTimePassed(this.timestamp)
       this.timestamp = getTime();
       this.updateMulti();
-      this.updateResources();
+      this.updateResources(delta);
       this.updateFurnace();
       this.statTracker.update({ steam: this.steam });
     },

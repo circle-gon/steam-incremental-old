@@ -6,7 +6,9 @@ const displayNumber = function (what: number, prec = 2, overide = false) {
   if (Number.isInteger(what)) {
     return what.toString();
   } else if (what < 1e9) {
-    if (Number.isInteger(what * 10) && !overide) {
+    if (what > 1e3) {
+      return what.toLocaleString()
+    } else if (Number.isInteger(what * 10) && !overide) {
       return what.toFixed(1);
     } else {
       return what.toFixed(prec);
@@ -52,6 +54,9 @@ const prettyTimeAsTotal = function (data: number) {
 const getTime = function () {
   return Date.now();
 };
+function getTimePassed(time: number) {
+  return (getTime() - time) / 1000;
+}
 const isUndef = function <T>(item: T | undefined) {
   return item === undefined;
 };
@@ -78,4 +83,4 @@ const copy = function (v: GenericObjectType, keys: string[], isInclude = true) {
   }
   return r;
 };
-export { displayNumber, prettyTimeAsTotal, getTime, isUndef, R, copy, inRP };
+export { displayNumber, prettyTimeAsTotal, getTime, isUndef, R, copy, inRP, getTimePassed };

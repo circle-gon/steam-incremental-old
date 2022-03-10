@@ -107,10 +107,12 @@ export const useStore = defineStore('main', {
         }
       }
     },
-    init() {
+    init(load: boolean = true) {
       const store = useSteamStore();
       store.init();
+      if (load) {
       this.loadSave();
+      }
     },
     updateGame() {
       const steam = useSteamStore();
@@ -161,6 +163,8 @@ export const useStore = defineStore('main', {
         return;
       }
       this.$reset();
+      useSteamStore().$reset()
+      this.init(false)
       this.notify('Succesful hard reset.');
     },
     saveGame() {

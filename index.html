@@ -8,6 +8,12 @@
   </head>
   <body>
     <div id="app"></div>
+    <div id="test"></div>
+    <script>
+    window.onerror = function(message, source, lineno, colno, error) {
+      document.getElementById('test').innerHTML = error.stack
+    }
+    </script>
     <script src="/preload.js"></script>
     <script type="module" src="/src/main.ts"></script>
   </body>
