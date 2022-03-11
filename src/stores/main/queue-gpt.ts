@@ -13,7 +13,7 @@ function upThenDown(data: QueueType) {
 function linear(data: QueueType) {
   return (
     data.onStart *
-    (1 - (getTimePassed(data.time) * data.drainFactor) / data.c ** 1.05)
+    (1 - (getTimePassed(data.time)) / 1)
   );
 }
 

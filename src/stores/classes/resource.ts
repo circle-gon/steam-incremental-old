@@ -83,13 +83,15 @@ class Resource implements ResourceType {
           data.remain = this.queueData.gainPerTick(data);
           // (c+1)/c because of start errors
           // now todo: figure out c and k's effect on result
-          this.owned += data.lastRemain - data.remain;
-          this.queueData.sideEffect(data.lastRemain - data.remain);
+          const diff = data.lastRemain - data.remain
+          this.owned += diff;
+          this.queueData.sideEffect(diff);
           if (this.owned > this.queueData.req) {
             this.queueData.queue = [];
             this.owned = this.queueData.req;
           } else if (data.remain < 0.01) {
             this.owned += data.remain;
+            this.queueData.sideEffect(0.01);
             this.queueData.queue.splice(num, 1);
           }
         }
