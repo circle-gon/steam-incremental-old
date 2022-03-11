@@ -3,7 +3,7 @@ import type {
   NotificationType,
   GenericObjectType,
   BasicType,
-  OneTimeSteamUpgradeType
+  OneTimeSteamUpgradeType,
 } from './main/types';
 import type { TabOptionsType, InnerTabOptionsListType } from './main/tabTypes';
 import { getTime, copy, inRP } from './main/utils';
@@ -15,11 +15,14 @@ import LZString from 'lz-string';
 import { useSteamStore } from './steam';
 export const useStore = defineStore('main', {
   state: () => ({
+    // tabs stuff
     tab: 'business' as TabOptionsType,
     innerTabs: {
       business: 'steam',
       options: 'settings',
     } as InnerTabOptionsListType,
+
+    // stats stuff
     stats: {
       totalTimePlayed: 0,
       // may replace with store
@@ -27,8 +30,13 @@ export const useStore = defineStore('main', {
     },
     // may replace with store
     keypresses: new Keypress(),
+
+    // modal stuff (but really small)
     modal: '',
+    // notifications stuff
     notifications: [] as NotificationType[],
+    // other 'internal' stuff but should be split into the other stores
+    // to not use use[xxxx]Store for everything
     internals: {
       timestamp: getTime(),
       rafID: 0,
@@ -93,8 +101,11 @@ export const useStore = defineStore('main', {
   actions: {
     buyUpgrade(data: { name: string; layer: number; oneTime: boolean }) {
       const layer = this.getData(data.layer);
-      function isOneUpgrades (name: string, upgs: OneTimeSteamUpgradeType): name is keyof OneTimeSteamUpgradeType {
-        return name in upgs
+      function isOneUpgrades(
+        name: string,
+        upgs: OneTimeSteamUpgradeType
+      ): name is keyof OneTimeSteamUpgradeType {
+        return name in upgs;
       }
       if (layer === undefined) {
         console.error('Invalid data.layer: ' + data.layer);
@@ -111,7 +122,7 @@ export const useStore = defineStore('main', {
       const store = useSteamStore();
       store.init();
       if (load) {
-      this.loadSave();
+        this.loadSave();
       }
     },
     updateGame() {
@@ -163,8 +174,8 @@ export const useStore = defineStore('main', {
         return;
       }
       this.$reset();
-      useSteamStore().$reset()
-      this.init(false)
+      useSteamStore().$reset();
+      this.init(false);
       this.notify('Succesful hard reset.');
     },
     saveGame() {
@@ -218,7 +229,6 @@ export const useStore = defineStore('main', {
             getString += strToPut;
           });
           // a workaround for now
-          console.log(getString);
           const inOthers = inRP(getString);
           if (inOthers) {
             getString = getString.replace(inOthers, '');

@@ -24,6 +24,7 @@ interface CoreUpgradeType {
   getResource: () => string;
   buy: () => void;
   hasBought: () => boolean;
+  data: UpgradeDataType;
 }
 interface CoreTabsType {
   display: string;
@@ -52,8 +53,15 @@ export interface ResourceType {
     c: number;
     queue: QueueType[];
     gainPerTick: GainType;
+    sideEffect: (diff: number) => void;
+    canDo: () => boolean;
   };
+  isEmpty: (shouldEmpty?: boolean) => boolean;
+  isNotFull: boolean;
 }
+export type UpgradeDataType =
+  | { show: false }
+  | { show: true; getBonus: () => string };
 export type GainType = (data: QueueType) => number;
 export type ResourceQueueType = Required<ResourceType>;
 export interface ResourceInputType {
@@ -63,6 +71,8 @@ export interface ResourceInputType {
   k?: number;
   c?: number;
   gainPerTick?: GainType;
+  sideEffect?: (diff: number) => void;
+  canDo?: () => boolean;
 }
 export interface QueueType {
   remain: number;
@@ -73,13 +83,14 @@ export interface QueueType {
   lastRemain: number;
   manual: boolean;
 }
-export interface ConfigType {
+export interface CoreConfigType {
   layer: number;
+  data: UpgradeDataType;
+}
+export interface ConfigType extends CoreConfigType {
   maxLevel?: number;
 }
-export interface OneTimeConfigType {
-  layer: number;
-}
+export interface OneTimeConfigType extends CoreConfigType {}
 export interface UpgradeType extends CoreUpgradeType {
   getPrice: (level: number) => number;
   getEffect: (level: number) => number;

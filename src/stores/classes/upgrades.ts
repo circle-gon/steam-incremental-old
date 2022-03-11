@@ -7,7 +7,11 @@ import type {
   UpgradeType,
   OneTimeUpgradeType,
   OneTimeConfigType,
+  UpgradeDataType,
+  CoreConfigType,
 } from '../main/types';
+
+const basicConfig: CoreConfigType = { layer: Infinity, data: { show: false } };
 class Upgrades implements UpgradeType {
   name: string;
   desc: string;
@@ -17,13 +21,14 @@ class Upgrades implements UpgradeType {
   layer: number;
   level: number;
   maxLevel: number;
+  data: UpgradeDataType;
   constructor(
     name: string,
     desc: string,
     getPrice: (level: number) => number,
     getEffect: (level: number) => number,
     isUnlocked: () => boolean,
-    config: ConfigType = { layer: Infinity }
+    config: ConfigType = basicConfig
   ) {
     this.name = name;
     this.desc = desc;
@@ -32,6 +37,7 @@ class Upgrades implements UpgradeType {
     this.getEffect = getEffect;
     this.isUnlocked = isUnlocked;
     this.layer = config.layer;
+    this.data = config.data;
     this.maxLevel = R(config.maxLevel, Infinity);
   }
 
@@ -105,7 +111,7 @@ class OneTimeUpgrades extends Upgrades implements OneTimeUpgradeType {
     getPrice: number,
     getEffect: number,
     isUnlocked: () => boolean,
-    config: OneTimeConfigType = { layer: Infinity }
+    config: OneTimeConfigType = basicConfig
   ) {
     super(
       name,

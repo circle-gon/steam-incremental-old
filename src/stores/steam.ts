@@ -5,14 +5,17 @@ import type {
   ConfigType,
   SteamResourceType,
   BasicType,
+  GainType
 } from './main/types';
 import { isOfType } from './main/types';
 import { StatTracker } from './classes/trackers';
 import { getTime, getTimePassed } from './main/utils';
 import { OneTimeUpgrades } from './classes/upgrades';
-import { linear } from './main/queue-gpt';
 
-const baseConfig: ConfigType = { layer: 1 };
+const baseConfigFactory = function () {
+  return { layer: 1, data: { show: false } } as const;
+};
+const autoCap = 0.4
 export const useSteamStore = defineStore('steam', {
   state: () => ({
     steam: new Resource(),
@@ -32,64 +35,76 @@ export const useSteamStore = defineStore('steam', {
         1,
         1,
         () => true,
-        baseConfig
+        baseConfigFactory()
       ),
       auto: new OneTimeUpgrades(
         'No one likes working!',
         'Automaticially fills the furnace based on your steam',
         3,
         1,
-        () => {
-          return false;
-        },
-        baseConfig
+        () => false,
+        baseConfigFactory()
       ),
     },
   }),
   getters: {
-    isUseable() {
+    isUseable(store) {
       return (innerRes: SteamResourceType) => {
+        const val = this[innerRes];
         //console.log(this.isEmpty(innerRes))
-        return !this.isDoing && this.isEmpty(innerRes);
+        return !store.isDoing && store[innerRes].isEmpty();
       };
     },
-    isEmpty: (store) => (innerRes: SteamResourceType, notFull: boolean = true) => {
-      const res = store[innerRes];
-      return (
-        (notFull ? res.owned < res.queueData.req : true) && 
-        res.queueData.queue.find((element) => {
-          return element.manual === true;
-        }) === undefined
-      );
+    autoFurnaceMulti(store) {
+      return Math.min((store.steam.owned + 1) ** 0.5 / 10, autoCap);
     },
   },
   actions: {
     init() {
-      this.oneUpgrades.auto.isUnlocked = () => {
+      const auto = this.oneUpgrades.auto;
+      auto.isUnlocked = () => {
         return this.oneUpgrades.stronger.hasBought();
       };
-    },
+      this.fill.queueData.sideEffect = (diff: number) => {
+        this.water.owned -= diff;
+      };
+      this.fill.queueData.canDo = () => {
+        return  this.water.owned > 0
+      }
+      auto.data.show = true;
+      if (auto.data.show) {
+        auto.data.getBonus = () => {
+          return (this.autoFurnaceMulti * 100).toFixed(0) + '%' + (this.autoFurnaceMulti === autoCap ? ' (capped)' : '')};
+        };
+      },
     updateResources(delta: number) {
-      const isDoingAttr = []
+      const isDoingAttr = [];
       for (const [key, value] of Object.entries(this)) {
         if (isOfType<ResourceQueueType>(value, 'queueData')) {
           value.update();
-          isDoingAttr.push(this.isEmpty(key, false))
+          isDoingAttr.push(value.isEmpty(false));
         }
       }
-      this.isDoing = isDoingAttr.includes(false)
+      this.isDoing = isDoingAttr.includes(false);
       if (OneTimeUpgrades.use(this.oneUpgrades.auto)) {
-        const multi = (this.steam.owned + 1) ** 0.4 / 25
-        this.heat.owned += this.heat.multi * multi * delta
-        this.fill.owned += this.fill.multi * multi * delta
+        const multi = this.autoFurnaceMulti;
+        if (this.heat.isNotFull && this.heat.queueData.canDo()) {
+          const result = this.heat.multi * multi * delta;
+          this.heat.owned += result
+          this.heat.queueData.sideEffect(result)
+        }
+        if (this.fill.isNotFull && this.fill.queueData.canDo()) {
+          const result = this.fill.multi * multi * delta;
+          this.fill.owned += result
+          this.fill.queueData.sideEffect(result)
+        }
       }
     },
     getResource(res: SteamResourceType) {
       const value = this[res];
       if (
-        value.queueData.queue.length === 0 &&
-        !this.isDoing &&
-        value.owned < value.queueData.req
+        this.isUseable(res) &&
+        (res === 'fill' ? this.fill.queueData.canDo() : true)
       ) {
         value.addNewQueue(value.multi);
       }
@@ -97,7 +112,7 @@ export const useSteamStore = defineStore('steam', {
     updateMulti() {
       this.heat.multi = 1 + OneTimeUpgrades.use(this.oneUpgrades.stronger);
       this.fill.multi = 1 + OneTimeUpgrades.use(this.oneUpgrades.stronger);
-      this.water.multi = 1 + OneTimeUpgrades.use(this.oneUpgrades.stronger)
+      this.water.multi = 1 + OneTimeUpgrades.use(this.oneUpgrades.stronger);
     },
     updateFurnace() {
       if (
@@ -119,7 +134,7 @@ export const useSteamStore = defineStore('steam', {
       Function('state', 'data', 'state' + path + '=data')(this, data);
     },
     update() {
-      const delta = getTimePassed(this.timestamp)
+      const delta = getTimePassed(this.timestamp);
       this.timestamp = getTime();
       this.updateMulti();
       this.updateResources(delta);
@@ -130,4 +145,7 @@ export const useSteamStore = defineStore('steam', {
 });
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useSteamStore, import.meta.hot));
+  import.meta.hot.accept(md => {
+    useSteamStore().init()
+  })
 }

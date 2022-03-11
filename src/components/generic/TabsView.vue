@@ -32,7 +32,6 @@ import {
 const store = useStore();
 defineProps<{
   tabList: TabsType[] | InnerTabsType[];
-  mainTab: boolean;
 }>();
 const changeTab = (tab: TabOptionsType) => {
   store.tab = tab;

@@ -1,6 +1,6 @@
 <template>
   <div class="center">
-    <tabs-view :tab-list="tabs" :main-tab="true" />
+    <tabs-view :tab-list="tabs" />
   </div>
 </template>
 <script setup lang="ts">

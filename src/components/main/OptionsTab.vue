@@ -1,7 +1,7 @@
 <template>
   <div class="tab-display">
     <br />
-    <tabs-view :tab-list="tabs" :main-tab="false" />
+    <tabs-view :tab-list="tabs" />
     <component :is="innerTab" />
   </div>
 </template>

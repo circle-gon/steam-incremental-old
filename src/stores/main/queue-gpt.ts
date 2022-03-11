@@ -1,9 +1,6 @@
 import type { QueueType } from './types';
-import { getTime } from './utils';
+import { getTime, getTimePassed } from './utils';
 
-function getTimePassed(time: number) {
-  return (getTime() - time) / 1000;
-}
 function upThenDown(data: QueueType) {
   return (
     ((data.onStart * (data.c + 1)) / data.c) *

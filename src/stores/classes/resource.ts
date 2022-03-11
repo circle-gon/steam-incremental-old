@@ -16,6 +16,8 @@ class Resource implements ResourceType {
     c: number;
     queue: QueueType[];
     gainPerTick: GainType;
+    sideEffect: (diff: number) => void;
+    canDo: () => boolean;
   };
   constructor(obj: ResourceInputType = {}) {
     this.owned = R(obj.owned, 0);
@@ -30,6 +32,8 @@ class Resource implements ResourceType {
         queue: [],
         gainPerTick:
           obj.gainPerTick !== undefined ? obj.gainPerTick : defaultQueue,
+        sideEffect: obj.sideEffect !== undefined ? obj.sideEffect : () => {},
+        canDo: obj.canDo !== undefined ? obj.canDo : () => true,
       };
     }
   }
@@ -48,15 +52,39 @@ class Resource implements ResourceType {
     }
   }
 
+  get isNotFull() {
+    if (this.queueData) {
+      return this.owned < this.queueData.req;
+    }
+    throw new Error(
+      'Can not perform isFull on Resource that does not have queueData'
+    );
+  }
+
+  isEmpty(notFull: boolean = true) {
+    if (this.queueData) {
+      return (
+        (notFull ? this.isNotFull : true) &&
+        this.queueData.queue.find((element) => {
+          return element.manual === true;
+        }) === undefined
+      );
+    }
+    throw new Error(
+      'Can not perform isEmpty on Resource that does not have queueData'
+    );
+  }
+
   update() {
     if (this.queueData) {
       for (const [num, data] of this.queueData.queue.entries()) {
-        if (isOfType<QueueType>(data, 'c')) {
+        if (isOfType<QueueType>(data, 'c') && this.queueData.canDo()) {
           data.lastRemain = data.remain;
           data.remain = this.queueData.gainPerTick(data);
           // (c+1)/c because of start errors
           // now todo: figure out c and k's effect on result
           this.owned += data.lastRemain - data.remain;
+          this.queueData.sideEffect(data.lastRemain - data.remain);
           if (this.owned > this.queueData.req) {
             this.queueData.queue = [];
             this.owned = this.queueData.req;

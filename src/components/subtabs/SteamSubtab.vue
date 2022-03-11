@@ -41,6 +41,7 @@
       :upgrade="upgrade"
       :upg-id="i"
       :one-time="true"
+      :current-data="upgrade.data"
     />
   </div>
 </template>
