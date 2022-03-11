@@ -1,4 +1,4 @@
-import type { TabOptionsType, InnerTabOptionsType } from './tabTypes';
+import type { TabOptionsType, InnerTabOptionsType } from "./tabTypes";
 
 // util types
 export type FilteredKeys<T, U> = {
@@ -33,8 +33,8 @@ interface CoreTabsType {
   lore?: LoreType[];
   buttons?: Array<RealSettingButtonType | undefined>[];
 }
-export const REPLACE_PATH = ['steam'];
-export type SteamResourceType = 'heat' | 'water' | 'fill';
+export const REPLACE_PATH = ["steam"];
+export type SteamResourceType = "heat" | "water" | "fill";
 export interface AchievementType {
   desc: string;
   hoverText: string;
@@ -90,7 +90,7 @@ export interface CoreConfigType {
 export interface ConfigType extends CoreConfigType {
   maxLevel?: number;
 }
-export interface OneTimeConfigType extends CoreConfigType {}
+export type OneTimeConfigType = CoreConfigType;
 export interface UpgradeType extends CoreUpgradeType {
   getPrice: (level: number) => number;
   getEffect: (level: number) => number;
@@ -153,12 +153,12 @@ export interface AchievementTrackerType {
   hasAchieve: (row: number, col: number) => boolean;
 }
 export interface SettingButtonType {
-  type: 'button';
+  type: "button";
   display: () => string | null;
   do: () => void;
 }
 export interface SettingButtonInputType {
-  type: 'input';
+  type: "input";
   display: () => string | null;
   doInput: (value: number) => void;
   other: InputType;

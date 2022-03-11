@@ -1,25 +1,25 @@
-import { defineStore, acceptHMRUpdate } from 'pinia';
+import { defineStore, acceptHMRUpdate } from "pinia";
 import type {
   NotificationType,
   GenericObjectType,
   BasicType,
   OneTimeSteamUpgradeType,
-} from './main/types';
-import type { TabOptionsType, InnerTabOptionsListType } from './main/tabTypes';
-import { getTime, copy, inRP } from './main/utils';
-import { AchievementTracker, StatTracker } from './classes/trackers';
-import { Upgrades } from './classes/upgrades';
-import { Resource } from './classes/resource';
-import { Keypress } from './classes/keypress';
-import LZString from 'lz-string';
-import { useSteamStore } from './steam';
-export const useStore = defineStore('main', {
+} from "./main/types";
+import type { TabOptionsType, InnerTabOptionsListType } from "./main/tabTypes";
+import { getTime, copy, inRP } from "./main/utils";
+import { AchievementTracker, StatTracker } from "./classes/trackers";
+import { Upgrades } from "./classes/upgrades";
+import { Resource } from "./classes/resource";
+import { Keypress } from "./classes/keypress";
+import LZString from "lz-string";
+import { useSteamStore } from "./steam";
+export const useStore = defineStore("main", {
   state: () => ({
     // tabs stuff
-    tab: 'business' as TabOptionsType,
+    tab: "business" as TabOptionsType,
     innerTabs: {
-      business: 'steam',
-      options: 'settings',
+      business: "steam",
+      options: "settings",
     } as InnerTabOptionsListType,
 
     // stats stuff
@@ -32,7 +32,7 @@ export const useStore = defineStore('main', {
     keypresses: new Keypress(),
 
     // modal stuff (but really small)
-    modal: '',
+    modal: "",
     // notifications stuff
     notifications: [] as NotificationType[],
     // other 'internal' stuff but should be split into the other stores
@@ -41,7 +41,7 @@ export const useStore = defineStore('main', {
       timestamp: getTime(),
       rafID: 0,
       fps: 0,
-      save: '',
+      save: "",
       lastSaveTimer: getTime(),
     },
     settings: {
@@ -56,22 +56,22 @@ export const useStore = defineStore('main', {
       const replacer = function (key: string, data: any) {
         if (
           [
-            'internals',
-            'tab',
-            'innerTabs',
-            'developer',
-            'notifications',
-            'modal',
-            'keypresses',
+            "internals",
+            "tab",
+            "innerTabs",
+            "developer",
+            "notifications",
+            "modal",
+            "keypresses",
           ].includes(key)
         )
           return undefined;
         // including those results that just include return for completeness
         if (data instanceof StatTracker) {
-          return copy(data as unknown as GenericObjectType, ['resList'], false);
+          return copy(data as unknown as GenericObjectType, ["resList"], false);
         }
         if (data instanceof Upgrades) {
-          return copy(data as unknown as GenericObjectType, ['level'], true);
+          return copy(data as unknown as GenericObjectType, ["level"], true);
         }
         if (data instanceof Resource) {
           return data;
@@ -94,7 +94,7 @@ export const useStore = defineStore('main', {
         case 1:
           return useSteamStore();
         default:
-          console.error('invalid layer: ' + layer);
+          console.error("invalid layer: " + layer);
       }
     },
   },
@@ -108,17 +108,17 @@ export const useStore = defineStore('main', {
         return name in upgs;
       }
       if (layer === undefined) {
-        console.error('Invalid data.layer: ' + data.layer);
+        console.error("Invalid data.layer: " + data.layer);
       } else {
         if (!data.oneTime) {
           //upg.upgrades[data.name].buy();
-          console.error('No multi-buy steam upgrades');
+          console.error("No multi-buy steam upgrades");
         } else if (isOneUpgrades(data.name, layer.oneUpgrades)) {
           layer.oneUpgrades[data.name].buy();
         }
       }
     },
-    init(load: boolean = true) {
+    init(load = true) {
       const store = useSteamStore();
       store.init();
       if (load) {
@@ -168,7 +168,7 @@ export const useStore = defineStore('main', {
     hardReset() {
       if (
         !confirm(
-          'Are you sure to do this? This will wipe all of your progress!'
+          "Are you sure to do this? This will wipe all of your progress!"
         )
       ) {
         return;
@@ -176,22 +176,22 @@ export const useStore = defineStore('main', {
       this.$reset();
       useSteamStore().$reset();
       this.init(false);
-      this.notify('Succesful hard reset.');
+      this.notify("Succesful hard reset.");
     },
     saveGame() {
-      localStorage.setItem('sgsave', this.getSave);
-      this.notify('Game saved.');
+      localStorage.setItem("sgsave", this.getSave);
+      this.notify("Game saved.");
     },
     loadSave() {
       const performSaveImport = (cache?: {
         stack: Array<string | number>;
         data: BasicType;
       }) => {
-        if (typeof cache === 'undefined') {
-          let loadedSave = '';
+        if (typeof cache === "undefined") {
+          let loadedSave = "";
           const saveToImport = this.internals.save
             ? this.internals.save
-            : localStorage.getItem('sgsave');
+            : localStorage.getItem("sgsave");
           if (!saveToImport) return;
           try {
             loadedSave = JSON.parse(
@@ -200,16 +200,16 @@ export const useStore = defineStore('main', {
           } catch (e) {
             // validation of save
             console.error(e);
-            this.notify('An error occured while importing your save.');
+            this.notify("An error occured while importing your save.");
             return;
           }
           // this didn't happen but just in case
           if (loadedSave === null) {
-            this.notify('Save is empty or is invalid.');
+            this.notify("Save is empty or is invalid.");
             return;
           }
           performSaveImport({ stack: [], data: loadedSave });
-        } else if (typeof cache.data === 'object' && cache.data !== null) {
+        } else if (typeof cache.data === "object" && cache.data !== null) {
           const toIter = Array.isArray(cache.data)
             ? cache.data.entries()
             : Object.entries(cache.data);
@@ -222,22 +222,22 @@ export const useStore = defineStore('main', {
             });
           }
         } else {
-          let getString = '';
+          let getString = "";
           cache.stack.forEach((item: number | string) => {
             const strToPut =
-              typeof item === 'number' ? `[${item}]` : `.${item}`;
+              typeof item === "number" ? `[${item}]` : `.${item}`;
             getString += strToPut;
           });
           // a workaround for now
           const inOthers = inRP(getString);
           if (inOthers) {
-            getString = getString.replace(inOthers, '');
+            getString = getString.replace(inOthers, "");
             useSteamStore().loadSaveFromString(getString, cache.data);
           } else {
             Function(
-              'state',
-              'data',
-              'state' + getString + '=data'
+              "state",
+              "data",
+              "state" + getString + "=data"
             )(this, cache.data);
           }
         }

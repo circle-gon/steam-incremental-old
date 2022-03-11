@@ -9,12 +9,12 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useStore } from '@/stores/main';
-import {useSteamStore} from '@/stores/steam'
-import { displayNumber } from '@/stores/main/utils';
-import { computed } from 'vue';
+import { useStore } from "@/stores/main";
+import { useSteamStore } from "@/stores/steam";
+import { displayNumber } from "@/stores/main/utils";
+import { computed } from "vue";
 const steamStore = useSteamStore();
-const store = useStore()
+const store = useStore();
 const steam = computed(() => steamStore.steam);
 const actFPS = computed(() => store.internals.fps);
 const shown = computed(() => store.settings.displayFPS);

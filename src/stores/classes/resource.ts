@@ -1,12 +1,12 @@
-import { R, getTime } from '../main/utils';
+import { R, getTime } from "../main/utils";
 import type {
   ResourceInputType,
   QueueType,
   ResourceType,
   GainType,
-} from '../main/types';
-import { isOfType } from '../main/types';
-import { upThenDown as defaultQueue } from '../main/queue-gpt';
+} from "../main/types";
+import { isOfType } from "../main/types";
+import { upThenDown as defaultQueue } from "../main/queue-gpt";
 class Resource implements ResourceType {
   owned: number;
   multi: number;
@@ -32,13 +32,13 @@ class Resource implements ResourceType {
         queue: [],
         gainPerTick:
           obj.gainPerTick !== undefined ? obj.gainPerTick : defaultQueue,
-        sideEffect: obj.sideEffect !== undefined ? obj.sideEffect : () => {},
+        sideEffect: obj.sideEffect !== undefined ? obj.sideEffect : () => {return undefined},
         canDo: obj.canDo !== undefined ? obj.canDo : () => true,
       };
     }
   }
 
-  addNewQueue(drainAmt: number, manual: boolean = true) {
+  addNewQueue(drainAmt: number, manual = true) {
     if (this.queueData) {
       this.queueData.queue.push({
         remain: drainAmt,
@@ -57,11 +57,11 @@ class Resource implements ResourceType {
       return this.owned < this.queueData.req;
     }
     throw new Error(
-      'Can not perform isFull on Resource that does not have queueData'
+      "Can not perform isFull on Resource that does not have queueData"
     );
   }
 
-  isEmpty(notFull: boolean = true) {
+  isEmpty(notFull = true) {
     if (this.queueData) {
       return (
         (notFull ? this.isNotFull : true) &&
@@ -71,14 +71,14 @@ class Resource implements ResourceType {
       );
     }
     throw new Error(
-      'Can not perform isEmpty on Resource that does not have queueData'
+      "Can not perform isEmpty on Resource that does not have queueData"
     );
   }
 
   update() {
     if (this.queueData) {
       for (const [num, data] of this.queueData.queue.entries()) {
-        if (isOfType<QueueType>(data, 'c') && this.queueData.canDo()) {
+        if (isOfType<QueueType>(data, "c") && this.queueData.canDo()) {
           data.lastRemain = data.remain;
           data.remain = this.queueData.gainPerTick(data);
           // (c+1)/c because of start errors

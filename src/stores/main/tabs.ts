@@ -1,14 +1,14 @@
-import type { TabsType, AchievementType } from './types';
-import { useSteamStore } from '../steam';
-import { useStore } from '../main';
-import { Achievement } from '../classes/achievements';
+import type { TabsType, AchievementType } from "./types";
+import { useSteamStore } from "../steam";
+import { useStore } from "../main";
+import { Achievement } from "../classes/achievements";
 
 const ACHIEVEMENTS: AchievementType[][] = [
   [
     new Achievement(
-      'Work',
-      'Get one steam. Reward: [kPoints].',
-      'fake url',
+      "Work",
+      "Get one steam. Reward: [kPoints].",
+      "fake url",
       function () {
         const store = useSteamStore();
         return store.statTracker.resources.steam.totalMade > 0;
@@ -19,19 +19,19 @@ const ACHIEVEMENTS: AchievementType[][] = [
 ];
 const TABS: TabsType[] = [
   {
-    display: 'Business',
-    actual: 'business',
+    display: "Business",
+    actual: "business",
     subtabs: [
       {
-        display: 'Steam',
-        actual: 'steam',
+        display: "Steam",
+        actual: "steam",
         shown() {
           return true;
         },
       },
       {
-        display: 'Workers',
-        actual: 'workers',
+        display: "Workers",
+        actual: "workers",
         shown() {
           //      return get(state, "steam","steam").totalMade >= 10
           return true;
@@ -43,32 +43,32 @@ const TABS: TabsType[] = [
     },
   },
   {
-    display: 'Stats',
-    actual: 'stats',
+    display: "Stats",
+    actual: "stats",
     shown() {
       return true;
     },
     subtabs: [],
   },
   {
-    display: 'Achievements',
-    actual: 'achieve',
+    display: "Achievements",
+    actual: "achieve",
     shown() {
       return true;
     },
     subtabs: [],
   },
   {
-    display: 'Lore',
-    actual: 'lore',
+    display: "Lore",
+    actual: "lore",
     lore: [
       {
-        text: 'You were bored, so you decided to make some steam using a hot pot you had at home.',
+        text: "You were bored, so you decided to make some steam using a hot pot you had at home.",
         unlocked() {
           const store = useSteamStore();
           return store.statTracker.resources.steam.totalMade > 0;
         },
-        textRequire: 'Get 1 Steam',
+        textRequire: "Get 1 Steam",
       },
       {
         text: "Trying to fill water and heat back and forth isn't really efficent, so you invented upgrades.",
@@ -76,7 +76,7 @@ const TABS: TabsType[] = [
           const store = useSteamStore();
           return store.statTracker.resources.steam.totalMade >= 5;
         },
-        textRequire: 'Get 5 Steam',
+        textRequire: "Get 5 Steam",
       },
     ],
     shown() {
@@ -85,26 +85,26 @@ const TABS: TabsType[] = [
     subtabs: [],
   },
   {
-    display: 'Options',
-    actual: 'options',
+    display: "Options",
+    actual: "options",
     subtabs: [
       {
-        display: 'Settings',
-        actual: 'settings',
+        display: "Settings",
+        actual: "settings",
         shown() {
           return true;
         },
       },
       {
-        display: 'About',
-        actual: 'about',
+        display: "About",
+        actual: "about",
         shown() {
           return true;
         },
       },
       {
-        display: 'Changelog',
-        actual: 'changelog',
+        display: "Changelog",
+        actual: "changelog",
         shown() {
           return true;
         },
@@ -113,24 +113,24 @@ const TABS: TabsType[] = [
     buttons: [
       [
         {
-          type: 'button',
-          display: () => 'Save game',
+          type: "button",
+          display: () => "Save game",
           do: () => {
             const store = useStore();
             store.saveGame();
           },
         },
         {
-          type: 'button',
-          display: () => 'Export save',
+          type: "button",
+          display: () => "Export save",
           do: () => {
             const store = useStore();
             store.internals.save = store.getSave;
           },
         },
         {
-          type: 'button',
-          display: () => 'Import save',
+          type: "button",
+          display: () => "Import save",
           do: () => {
             const store = useStore();
             store.loadSave();
@@ -139,9 +139,9 @@ const TABS: TabsType[] = [
       ],
       [
         {
-          type: 'input',
+          type: "input",
           display() {
-            return 'Save interval: ' + this.other.getValue() + ' secs';
+            return "Save interval: " + this.other.getValue() + " secs";
           },
           doInput(value: number) {
             const store = useStore();
@@ -160,9 +160,9 @@ const TABS: TabsType[] = [
           },
         },
         {
-          type: 'input',
+          type: "input",
           display() {
-            return 'Game loop rate: ' + this.other.getValue() + ' ms';
+            return "Game loop rate: " + this.other.getValue() + " ms";
           },
           doInput(value: number) {
             const store = useStore();
@@ -181,10 +181,10 @@ const TABS: TabsType[] = [
           },
         },
         {
-          type: 'button',
+          type: "button",
           display: () => {
             const store = useStore();
-            return (store.settings.displayFPS ? 'Hide' : 'Display') + ' FPS';
+            return (store.settings.displayFPS ? "Hide" : "Display") + " FPS";
           },
           do: () => {
             const store = useStore();
@@ -195,8 +195,8 @@ const TABS: TabsType[] = [
       [
         undefined,
         {
-          type: 'button',
-          display: () => 'HARD RESET',
+          type: "button",
+          display: () => "HARD RESET",
           do: () => {
             const store = useStore();
             store.hardReset();

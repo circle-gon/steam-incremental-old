@@ -30,7 +30,7 @@ const TAB_LIST = {
   options: OptionsTab,
 };
 onMounted(() => {
-  store.init()
+  store.init();
   store.mainGameLoop();
 });
 const tab = computed(() =>

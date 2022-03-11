@@ -7,22 +7,24 @@
     >
       {{ upgrade.name }}
       <br />{{ upgrade.desc }} <br />Cost: {{ upgrade.getPriceDisplay() }}
-      <div v-if="currentData.show">
-      Currently: {{currentData.getBonus()}}
-      </div>
+      <div v-if="currentData.show">Currently: {{ currentData.getBonus() }}</div>
     </button>
   </span>
 </template>
 <script setup lang="ts">
-import { useStore } from '@/stores/main';
-import { computed } from 'vue';
-import type { UpgradeType, OneTimeUpgradeType, UpgradeDataType } from '@/stores/main/types';
+import { useStore } from "@/stores/main";
+import { computed } from "vue";
+import type {
+  UpgradeType,
+  OneTimeUpgradeType,
+  UpgradeDataType,
+} from "@/stores/main/types";
 const store = useStore();
 const props = defineProps<{
   upgId: string | number;
   upgrade: UpgradeType | OneTimeUpgradeType;
   oneTime: boolean;
-  currentData: UpgradeDataType
+  currentData: UpgradeDataType;
 }>();
 const buyUpgrade = (obj: { name: string; layer: number; oneTime: boolean }) => {
   store.buyUpgrade(obj);

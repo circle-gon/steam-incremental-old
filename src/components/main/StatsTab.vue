@@ -8,9 +8,9 @@
 </template>
 <script setup lang="ts">
 import { useSteamStore } from "@/stores/steam";
-import {useStore} from '@/stores/main'
+import { useStore } from "@/stores/main";
 import { prettyTimeAsTotal } from "@/stores/main/utils";
 const steamStore = useSteamStore();
-const store = useStore()
+const store = useStore();
 const tracked = steamStore.statTracker.resources;
 </script>
