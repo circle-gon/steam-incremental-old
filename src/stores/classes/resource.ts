@@ -1,4 +1,4 @@
-import { R, getTime } from "../main/utils";
+import { R, getTime, getTimePassed } from "../main/utils";
 import type {
   ResourceInputType,
   QueueType,

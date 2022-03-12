@@ -1,5 +1,5 @@
-import type { QueueType } from "./types";
-import {getTimePassed } from "./utils";
+import type { QueueType } from './types';
+import { getTimePassed } from './utils';
 
 function upThenDown(data: QueueType) {
   return (
@@ -13,7 +13,7 @@ function upThenDown(data: QueueType) {
 function linear(data: QueueType) {
   return (
     data.onStart *
-    (1 - (getTimePassed(data.time)) / 1)
+    (1 - (getTimePassed(data.time) * data.drainFactor) / data.c ** 1.05)
   );
 }
 

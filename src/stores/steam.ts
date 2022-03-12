@@ -38,7 +38,7 @@ export const useSteamStore = defineStore('steam', {
         baseConfigFactory()
       ),
       auto: new OneTimeUpgrades(
-        'No one likes working!',
+        'Make a Rube Goldberg machine',
         'Automaticially fills the furnace based on your steam',
         3,
         1,
@@ -81,9 +81,9 @@ export const useSteamStore = defineStore('steam', {
         return this.water.owned > 0;
       };
       this.water.queueData.gainPerTick = (data: QueueType) => {
-        return (OneTimeUpgrades.use(this.oneUpgrades.help)
-          ? linear
-          : upThenDown)(data);
+        return (
+          OneTimeUpgrades.use(this.oneUpgrades.help) ? linear : upThenDown
+        )(data);
       };
       auto.data.show = true;
       if (auto.data.show) {
@@ -105,7 +105,7 @@ export const useSteamStore = defineStore('steam', {
         }
       }
       this.isDoing = isDoingAttr.includes(false);
-      /*if (OneTimeUpgrades.use(this.oneUpgrades.auto)) {
+      if (OneTimeUpgrades.use(this.oneUpgrades.auto)) {
         const multi = this.autoFurnaceMulti;
         if (this.heat.isNotFull && this.heat.queueData.canDo()) {
           const result = this.heat.multi * multi * delta;
@@ -117,7 +117,7 @@ export const useSteamStore = defineStore('steam', {
           this.fill.owned += result;
           this.fill.queueData.sideEffect(result);
         }
-      }*/
+      }
     },
     getResource(res: SteamResourceType) {
       const value = this[res];
@@ -165,6 +165,8 @@ export const useSteamStore = defineStore('steam', {
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useSteamStore, import.meta.hot));
   import.meta.hot.accept((m) => {
+    console.log("[dev]: hot reload steam.ts -> init")
+    // hot
     useSteamStore().init();
   });
 }
