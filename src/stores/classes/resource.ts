@@ -1,12 +1,12 @@
-import { R, getTime, getTimePassed } from "../main/utils";
+import { R, getTime, getTimePassed } from '../main/utils';
 import type {
   ResourceInputType,
   QueueType,
   ResourceType,
   GainType,
-} from "../main/types";
-import { isOfType } from "../main/types";
-import { upThenDown as defaultQueue } from "../main/queue-gpt";
+} from '../main/types';
+import { isOfType } from '../main/types';
+import { upThenDown as defaultQueue } from '../main/queue-gpt';
 class Resource implements ResourceType {
   owned: number;
   multi: number;
@@ -32,7 +32,12 @@ class Resource implements ResourceType {
         queue: [],
         gainPerTick:
           obj.gainPerTick !== undefined ? obj.gainPerTick : defaultQueue,
-        sideEffect: obj.sideEffect !== undefined ? obj.sideEffect : () => {return undefined},
+        sideEffect:
+          obj.sideEffect !== undefined
+            ? obj.sideEffect
+            : () => {
+                return undefined;
+              },
         canDo: obj.canDo !== undefined ? obj.canDo : () => true,
       };
     }
@@ -57,7 +62,7 @@ class Resource implements ResourceType {
       return this.owned < this.queueData.req;
     }
     throw new Error(
-      "Can not perform isFull on Resource that does not have queueData"
+      'Can not perform isFull on Resource that does not have queueData'
     );
   }
 
@@ -71,19 +76,19 @@ class Resource implements ResourceType {
       );
     }
     throw new Error(
-      "Can not perform isEmpty on Resource that does not have queueData"
+      'Can not perform isEmpty on Resource that does not have queueData'
     );
   }
 
   update() {
     if (this.queueData) {
       for (const [num, data] of this.queueData.queue.entries()) {
-        if (isOfType<QueueType>(data, "c") && this.queueData.canDo()) {
+        if (isOfType<QueueType>(data, 'c') && this.queueData.canDo()) {
           data.lastRemain = data.remain;
           data.remain = this.queueData.gainPerTick(data);
           // (c+1)/c because of start errors
           // now todo: figure out c and k's effect on result
-          const diff = data.lastRemain - data.remain
+          const diff = data.lastRemain - data.remain;
           this.owned += diff;
           this.queueData.sideEffect(diff);
           if (this.owned > this.queueData.req) {
@@ -91,7 +96,7 @@ class Resource implements ResourceType {
             this.owned = this.queueData.req;
           } else if (data.remain < 0.01) {
             this.owned += data.remain;
-            this.queueData.sideEffect(0.01);
+            this.queueData.sideEffect(data.remain);
             this.queueData.queue.splice(num, 1);
           }
         }

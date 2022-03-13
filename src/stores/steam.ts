@@ -15,7 +15,7 @@ import { linear, upThenDown } from './main/queue-gpt';
 const baseConfigFactory = function () {
   return { layer: 1, data: { show: false } } as const;
 };
-const autoCap = 0.4;
+const autoCap = 0.2;
 export const useSteamStore = defineStore('steam', {
   state: () => ({
     steam: new Resource(),
@@ -75,15 +75,17 @@ export const useSteamStore = defineStore('steam', {
         return auto.hasBought();
       };
       this.fill.queueData.sideEffect = (diff: number) => {
-        this.water.owned -= diff > this.water.owned ? this.water.owned : diff;
+        this.water.owned -= diff;
       };
       this.fill.queueData.canDo = () => {
         return this.water.owned > 0;
       };
       this.water.queueData.gainPerTick = (data: QueueType) => {
-        return (
+        const gain = (
           OneTimeUpgrades.use(this.oneUpgrades.help) ? linear : upThenDown
         )(data);
+        console.log(gain);
+        return gain;
       };
       auto.data.show = true;
       if (auto.data.show) {
@@ -113,7 +115,10 @@ export const useSteamStore = defineStore('steam', {
           this.heat.queueData.sideEffect(result);
         }
         if (this.fill.isNotFull && this.fill.queueData.canDo()) {
-          const result = this.fill.multi * multi * delta;
+          let result = this.fill.multi * multi * delta;
+          console.log(result)
+          result = result > this.water.owned ? this.water.owned : result;
+          console.log(result);
           this.fill.owned += result;
           this.fill.queueData.sideEffect(result);
         }
@@ -165,7 +170,7 @@ export const useSteamStore = defineStore('steam', {
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useSteamStore, import.meta.hot));
   import.meta.hot.accept((m) => {
-    console.log("[dev]: hot reload steam.ts -> init")
+    console.log('[dev]: hot reload steam.ts -> init');
     // hot
     useSteamStore().init();
   });
