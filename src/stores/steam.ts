@@ -1,4 +1,4 @@
-import { defineStore, acceptHMRUpdate } from 'pinia';
+import { defineStore } from 'pinia';
 import { Resource } from './classes/resource';
 import type {
   ResourceQueueType,
@@ -8,14 +8,13 @@ import type {
 } from './main/types';
 import { isOfType } from './main/types';
 import { StatTracker } from './classes/trackers';
-import { getTime, getTimePassed } from './main/utils';
 import { OneTimeUpgrades } from './classes/upgrades';
 import { linear, upThenDown } from './main/queue-gpt';
 
 const baseConfigFactory = function () {
   return { layer: 1, data: { show: false } } as const;
 };
-const autoCap = 0.2;
+const autoCap = 0.4;
 export const useSteamStore = defineStore('steam', {
   state: () => ({
     steam: new Resource(),
@@ -26,7 +25,6 @@ export const useSteamStore = defineStore('steam', {
     heat: new Resource({ req: 1 }) as ResourceQueueType,
     fill: new Resource({ req: 1 }) as ResourceQueueType,
     isDoing: false,
-    timestamp: getTime(),
     statTracker: new StatTracker(['steam']),
     oneUpgrades: {
       stronger: new OneTimeUpgrades(
@@ -84,7 +82,6 @@ export const useSteamStore = defineStore('steam', {
         const gain = (
           OneTimeUpgrades.use(this.oneUpgrades.help) ? linear : upThenDown
         )(data);
-        console.log(gain);
         return gain;
       };
       auto.data.show = true;
@@ -116,9 +113,7 @@ export const useSteamStore = defineStore('steam', {
         }
         if (this.fill.isNotFull && this.fill.queueData.canDo()) {
           let result = this.fill.multi * multi * delta;
-          console.log(result)
           result = result > this.water.owned ? this.water.owned : result;
-          console.log(result);
           this.fill.owned += result;
           this.fill.queueData.sideEffect(result);
         }
@@ -157,9 +152,7 @@ export const useSteamStore = defineStore('steam', {
       }
       Function('state', 'data', 'state' + path + '=data')(this, data);
     },
-    update() {
-      const delta = getTimePassed(this.timestamp);
-      this.timestamp = getTime();
+    update(delta: number) {
       this.updateMulti();
       this.updateResources(delta);
       this.updateFurnace();
@@ -167,11 +160,3 @@ export const useSteamStore = defineStore('steam', {
     },
   },
 });
-if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useSteamStore, import.meta.hot));
-  import.meta.hot.accept((m) => {
-    console.log('[dev]: hot reload steam.ts -> init');
-    // hot
-    useSteamStore().init();
-  });
-}

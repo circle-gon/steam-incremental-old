@@ -28,13 +28,13 @@
 </template>
 <script setup lang="ts">
 // @unsafe key
-import SettingButton from "../generic/SettingButton.vue";
-import SettingInputButton from "../generic/SettingButtonInput.vue";
-import { getTab } from "@/stores/main/compUtils";
-import { computed } from "vue";
-import { useStore } from "@/stores/main";
+import SettingButton from '../generic/SettingButton.vue';
+import SettingInputButton from '../generic/SettingButtonInput.vue';
+import { getTab } from '@/stores/main/compUtils';
+import { computed } from 'vue';
+import { useStore } from '@/stores/main';
 const store = useStore();
-const btns = getTab("options").buttons;
+const btns = getTab('options').buttons;
 const save = computed({
   get: () => store.internals.save,
   set: (save: string) => {

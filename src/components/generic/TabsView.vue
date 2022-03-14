@@ -17,43 +17,19 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useStore } from "@/stores/main";
+import { useTabsStore } from "@/stores/main";
 import type { TabsType, InnerTabsType } from "@/stores/main/types";
 import type {
-  TabOptionsType,
-  InnerTabKeysType,
-  BUSINESS_TAB_LIST_TYPE as BSTYPE,
-  OPTIONS_TAB_LIST_TYPE as OSTYPE,
+  TabOptionsType
 } from "@/stores/main/tabTypes";
-import {
-  BUSINESS_TAB_LIST as BS,
-  OPTIONS_TAB_LIST as OS,
-} from "@/stores/main/tabTypes";
-const store = useStore();
 defineProps<{
   tabList: TabsType[] | InnerTabsType[];
 }>();
 const changeTab = (tab: TabOptionsType) => {
-  store.tab = tab;
+  useTabsStore().tab = tab
 };
 
 const changeInnerTab = (tab: string) => {
-  function isInInnerTabs(otab: string): otab is InnerTabKeysType {
-    return otab in store.innerTabs;
-  }
-  function isCertainStr<T>(str: T, tlist: Readonly<T[]>): str is T {
-    return tlist.includes(str as T);
-  }
-  if (isInInnerTabs(store.tab)) {
-    if (isCertainStr<keyof BSTYPE>(tab, BS) && store.tab === "business") {
-      store.innerTabs[store.tab] = tab;
-    } else if (isCertainStr<keyof OSTYPE>(tab, OS) && store.tab === "options") {
-      store.innerTabs[store.tab] = tab;
-    } else {
-      throw new Error(`Not a valid type: ${tab}`);
-    }
-  } else {
-    throw new Error(`Tab ${store.tab} does not have a inner tab.`);
-  }
+  useTabsStore().changeInnerTab(tab)
 };
 </script>

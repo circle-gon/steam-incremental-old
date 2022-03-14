@@ -46,7 +46,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useSteamStore } from "@/stores/steam";
+import { useSteamStore } from "@/stores/main";
 import UpgradeButton from "../generic/UpgradeButton.vue";
 import { displayNumber } from "@/stores/main/utils";
 import type { SteamResourceType } from "@/stores/main/types";

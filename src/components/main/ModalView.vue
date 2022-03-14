@@ -8,7 +8,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useStore } from "../../stores/main";
+import { useStore } from "@/stores/main";
 import { computed } from "vue";
 //import { getComputedTab } from '../../stores/main/compUtils';
 const store = useStore();

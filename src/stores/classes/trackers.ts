@@ -2,7 +2,6 @@
 // their values
 // does require resources list to equal obj[res]
 // ie. "steam" -> obj.steam
-import { ACHIEVEMENTS } from "../main/tabs";
 import type {
   TrackType,
   ContentType,
@@ -31,32 +30,4 @@ class StatTracker implements StatTrackerType {
     }
   }
 }
-class AchievementTracker implements AchievementTrackerType {
-  achievesUnlocked: number[];
-  knowPoints: number;
-  constructor() {
-    this.achievesUnlocked = [];
-    this.knowPoints = 0;
-  }
-
-  updateAchieves() {
-    for (const [rowNum, achieveRow] of ACHIEVEMENTS.entries()) {
-      for (const [aNum, achieve] of achieveRow.entries()) {
-        const token = AchievementTracker.getIdFromData(rowNum, aNum);
-        if (achieve.isUnlocked() && !this.hasAchieve(rowNum, aNum)) {
-          this.achievesUnlocked.push(token);
-          this.knowPoints += achieve.bonus;
-        }
-      }
-    }
-  }
-  static getIdFromData(row: number, col: number) {
-    return Number.parseInt(row.toString() + col.toString());
-  }
-  hasAchieve(row: number, col: number) {
-    return this.achievesUnlocked.includes(
-      AchievementTracker.getIdFromData(row, col)
-    );
-  }
-}
-export { AchievementTracker, StatTracker };
+export { StatTracker };

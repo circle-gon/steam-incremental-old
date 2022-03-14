@@ -11,9 +11,9 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useStore } from "@/stores/main";
+import { useNotificationStore } from "@/stores/main";
 import { computed } from "vue";
-const store = useStore();
+const store = useNotificationStore();
 const notifications = computed(() => store.notifications.slice().reverse());
 const removeNotify = (i: number) => {
   store.removeNotify(i);

@@ -7,8 +7,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useSteamStore } from "@/stores/steam";
-import { useStore } from "@/stores/main";
+import { useStore, useSteamStore } from "@/stores/main";
 import { prettyTimeAsTotal } from "@/stores/main/utils";
 const steamStore = useSteamStore();
 const store = useStore();

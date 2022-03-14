@@ -1,49 +1,47 @@
-import { defineStore, acceptHMRUpdate } from "pinia";
+import { defineStore, acceptHMRUpdate } from 'pinia';
 import type {
-  NotificationType,
   GenericObjectType,
   BasicType,
   OneTimeSteamUpgradeType,
-} from "./main/types";
-import type { TabOptionsType, InnerTabOptionsListType } from "./main/tabTypes";
-import { getTime, copy, inRP } from "./main/utils";
-import { AchievementTracker, StatTracker } from "./classes/trackers";
-import { Upgrades } from "./classes/upgrades";
-import { Resource } from "./classes/resource";
-import { Keypress } from "./classes/keypress";
-import LZString from "lz-string";
-import { useSteamStore } from "./steam";
-export const useStore = defineStore("main", {
-  state: () => ({
-    // tabs stuff
-    tab: "business" as TabOptionsType,
-    innerTabs: {
-      business: "steam",
-      options: "settings",
-    } as InnerTabOptionsListType,
+} from './main/types';
+import { getTime, copy, inRP } from './main/utils';
+import { StatTracker } from './classes/trackers';
+import { Upgrades } from './classes/upgrades';
+import { Resource } from './classes/resource';
+import { Keypress } from './classes/keypress';
+import LZString from 'lz-string';
+import { useSteamStore } from './steam';
+import { useTabsStore } from './tabs';
+import { useNotificationStore } from './notifications';
+import { useStatsStore } from './stats';
+import { useKeypressStore } from './keypress';
 
+const ALL_STORES = {
+  steam: useSteamStore,
+  tabs: useTabsStore,
+  notify: useNotificationStore,
+  stats: useStatsStore,
+  keypress: useKeypressStore,
+};
+export const useStore = defineStore('main', {
+  state: () => ({
     // stats stuff
-    stats: {
-      totalTimePlayed: 0,
-      // may replace with store
-      achievements: new AchievementTracker(),
-    },
     // may replace with store
-    keypresses: new Keypress(),
 
     // modal stuff (but really small)
-    modal: "",
+    modal: '',
     // notifications stuff
-    notifications: [] as NotificationType[],
     // other 'internal' stuff but should be split into the other stores
     // to not use use[xxxx]Store for everything
     internals: {
       timestamp: getTime(),
       rafID: 0,
       fps: 0,
-      save: "",
+      save: '',
       lastSaveTimer: getTime(),
     },
+
+    // too small for now to consider moving it to another store
     settings: {
       displayFPS: false,
       maxFPS: 60,
@@ -54,39 +52,25 @@ export const useStore = defineStore("main", {
     getSave(): string {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const replacer = function (key: string, data: any) {
-        if (
-          [
-            "internals",
-            "tab",
-            "innerTabs",
-            "developer",
-            "notifications",
-            "modal",
-            "keypresses",
-          ].includes(key)
-        )
-          return undefined;
+        if (['internals', 'modal'].includes(key)) return undefined;
         // including those results that just include return for completeness
         if (data instanceof StatTracker) {
-          return copy(data as unknown as GenericObjectType, ["resList"], false);
+          return copy(data as unknown as GenericObjectType, ['resList'], false);
         }
         if (data instanceof Upgrades) {
-          return copy(data as unknown as GenericObjectType, ["level"], true);
+          return copy(data as unknown as GenericObjectType, ['level'], true);
         }
         if (data instanceof Resource) {
-          return data;
-        }
-        if (data instanceof AchievementTracker) {
           return data;
         }
         return data;
       };
       const save = {
         ...this.$state,
-        steam: {
-          ...useSteamStore().$state,
-        },
       };
+      Object.entries(REPLACE_PATH).forEach((entries) => {
+        save[entries[0]] = entries[1]().$state;
+      });
       return LZString.compressToBase64(JSON.stringify(save, replacer));
     },
     getData: () => (layer: number) => {
@@ -94,7 +78,7 @@ export const useStore = defineStore("main", {
         case 1:
           return useSteamStore();
         default:
-          console.error("invalid layer: " + layer);
+          console.error('invalid layer: ' + layer);
       }
     },
   },
@@ -108,11 +92,11 @@ export const useStore = defineStore("main", {
         return name in upgs;
       }
       if (layer === undefined) {
-        console.error("Invalid data.layer: " + data.layer);
+        console.error('Invalid data.layer: ' + data.layer);
       } else {
         if (!data.oneTime) {
           //upg.upgrades[data.name].buy();
-          console.error("No multi-buy steam upgrades");
+          console.error('No multi-buy steam upgrades');
         } else if (isOneUpgrades(data.name, layer.oneUpgrades)) {
           layer.oneUpgrades[data.name].buy();
         }
@@ -125,36 +109,21 @@ export const useStore = defineStore("main", {
         this.loadSave();
       }
     },
-    updateGame() {
+    updateGame(delta: number) {
       const steam = useSteamStore();
-      steam.update();
-    },
-    updateNotifications() {
-      for (const [num, notify] of this.notifications.entries()) {
-        if (Date.now() - notify.time > 5000) {
-          this.removeNotify(num);
-        }
-      }
-    },
-    notify(text: string) {
-      this.notifications.push({
-        text: text,
-        time: Date.now(),
-      });
-    },
-    removeNotify(id: number) {
-      this.notifications.splice(id, 1);
+      steam.update(delta);
     },
     updateStats(timepassed: number) {
-      this.stats.totalTimePlayed += timepassed;
-      this.stats.achievements.updateAchieves();
+      const statsStore = useStatsStore();
+      statsStore.totalTimePlayed += timepassed;
+      statsStore.updateAchieves();
     },
     updateExternal(timepassed: number) {
       this.internals.fps = 1000 / timepassed;
       this.updateStats(timepassed);
       this.internals.timestamp = getTime();
       this.updateSaveGameTick();
-      this.updateNotifications();
+      useNotificationStore().updateNotifications();
     },
     updateSaveGameTick() {
       if (
@@ -168,30 +137,33 @@ export const useStore = defineStore("main", {
     hardReset() {
       if (
         !confirm(
-          "Are you sure to do this? This will wipe all of your progress!"
+          'Are you sure to do this? This will wipe all of your progress!'
         )
       ) {
         return;
       }
       this.$reset();
+      Object.values(ALL_STORES).forEach((store) => {
+        store.$reset();
+      });
       useSteamStore().$reset();
       this.init(false);
-      this.notify("Succesful hard reset.");
+      useNotificationStore().notify('Succesful hard reset.');
     },
     saveGame() {
-      localStorage.setItem("sgsave", this.getSave);
-      this.notify("Game saved.");
+      localStorage.setItem('sgsave', this.getSave);
+      useNotificationStore().notify('Game saved.');
     },
     loadSave() {
       const performSaveImport = (cache?: {
         stack: Array<string | number>;
         data: BasicType;
       }) => {
-        if (typeof cache === "undefined") {
-          let loadedSave = "";
+        if (typeof cache === 'undefined') {
+          let loadedSave = '';
           const saveToImport = this.internals.save
             ? this.internals.save
-            : localStorage.getItem("sgsave");
+            : localStorage.getItem('sgsave');
           if (!saveToImport) return;
           try {
             loadedSave = JSON.parse(
@@ -200,16 +172,18 @@ export const useStore = defineStore("main", {
           } catch (e) {
             // validation of save
             console.error(e);
-            this.notify("An error occured while importing your save.");
+            useNotificationStore().notify(
+              'An error occured while importing your save.'
+            );
             return;
           }
           // this didn't happen but just in case
           if (loadedSave === null) {
-            this.notify("Save is empty or is invalid.");
+            useNotificationStore().notify('Save is empty or is invalid.');
             return;
           }
           performSaveImport({ stack: [], data: loadedSave });
-        } else if (typeof cache.data === "object" && cache.data !== null) {
+        } else if (typeof cache.data === 'object' && cache.data !== null) {
           const toIter = Array.isArray(cache.data)
             ? cache.data.entries()
             : Object.entries(cache.data);
@@ -222,22 +196,22 @@ export const useStore = defineStore("main", {
             });
           }
         } else {
-          let getString = "";
-          cache.stack.forEach((item: number | string) => {
+          let getString = '';
+          cache.stack.forEach((item) => {
             const strToPut =
-              typeof item === "number" ? `[${item}]` : `.${item}`;
+              typeof item === 'number' ? `[${item}]` : `.${item}`;
             getString += strToPut;
           });
           // a workaround for now
           const inOthers = inRP(getString);
           if (inOthers) {
-            getString = getString.replace(inOthers, "");
-            useSteamStore().loadSaveFromString(getString, cache.data);
+            getString = getString.replace(inOthers.text, '');
+            inOthers.obj().loadSaveFromString(getString, cache.data);
           } else {
             Function(
-              "state",
-              "data",
-              "state" + getString + "=data"
+              'state',
+              'data',
+              'state' + getString + '=data'
             )(this, cache.data);
           }
         }
@@ -247,7 +221,7 @@ export const useStore = defineStore("main", {
     mainGameLoop() {
       const timepassed = getTime() - this.internals.timestamp;
       if (timepassed > 1000 / this.settings.maxFPS) {
-        this.updateGame();
+        this.updateGame(timepassed);
         this.updateExternal(timepassed);
       }
       this.internals.rafID = requestAnimationFrame(() => {
@@ -256,6 +230,27 @@ export const useStore = defineStore("main", {
     },
   },
 });
-if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useStore, import.meta.hot));
+export const REPLACE_PATH = {
+  steam: useSteamStore,
+  stats: useStatsStore,
+};
+if (import.meta.hot !== undefined) {
+  const hotModules = Object.values(ALL_STORES);
+  hotModules.push(useStore);
+  for (const md of hotModules) {
+    import.meta.hot.accept(acceptHMRUpdate(md, import.meta.hot));
+  }
+  import.meta.hot.accept((m) => {
+    if (!m.useSteamStore) return;
+    console.log('[dev]: hot reload steam.ts -> init');
+    // hot
+    useSteamStore().init();
+  });
 }
+export {
+  useSteamStore,
+  useTabsStore,
+  useNotificationStore,
+  useStatsStore,
+  useKeypressStore,
+};

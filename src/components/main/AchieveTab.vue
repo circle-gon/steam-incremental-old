@@ -23,16 +23,14 @@
 </template>
 <script setup lang="ts">
 // @unsafe key
-import { ACHIEVEMENTS } from "@/stores/main/tabs";
-import { useStore } from "@/stores/main";
-import { computed } from "vue";
-const store = useStore();
+import { ACHIEVEMENTS } from '@/stores/main/tabs';
+import { useStatsStore } from '@/stores/main';
+import { computed } from 'vue';
+const store = useStatsStore();
 const achieves = ACHIEVEMENTS;
-const points = computed(() => store.stats.achievements.knowPoints);
+const points = computed(() => store.knowPoints);
 const isUnlocked = (rowId: number, colId: number) => {
-  return store.stats.achievements.hasAchieve(rowId, colId)
-    ? "#00FF00"
-    : "#FFFFFF";
+  return store.hasAchieve(rowId, colId) ? '#00FF00' : '#FFFFFF';
 };
 </script>
 <style scoped>

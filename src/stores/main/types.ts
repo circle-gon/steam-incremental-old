@@ -33,7 +33,6 @@ interface CoreTabsType {
   lore?: LoreType[];
   buttons?: Array<RealSettingButtonType | undefined>[];
 }
-export const REPLACE_PATH = ["steam"];
 export type SteamResourceType = "heat" | "water" | "fill";
 export interface AchievementType {
   desc: string;

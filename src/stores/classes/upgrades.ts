@@ -1,6 +1,6 @@
 // upgrades n stuff for most of the game
-import { R } from "../main/utils";
-import { useSteamStore } from "../steam";
+import { R } from '../main/utils';
+import { useSteamStore } from '../main';
 import type {
   ConfigType,
   UpgradeType,
@@ -8,7 +8,7 @@ import type {
   OneTimeConfigType,
   UpgradeDataType,
   CoreConfigType,
-} from "../main/types";
+} from '../main/types';
 
 const basicConfig: CoreConfigType = { layer: Infinity, data: { show: false } };
 class Upgrades implements UpgradeType {
@@ -45,7 +45,7 @@ class Upgrades implements UpgradeType {
   }
 
   getPriceDisplay() {
-    return this.getCurrentPrice() + " " + this.getResource();
+    return this.getCurrentPrice() + ' ' + this.getResource();
   }
 
   isMaxLevel() {
@@ -61,7 +61,7 @@ class Upgrades implements UpgradeType {
     switch (this.layer) {
       case 1:
         curr = useSteamStore().steam;
-        break
+        break;
       default:
         break;
     }
@@ -69,7 +69,7 @@ class Upgrades implements UpgradeType {
   }
 
   getResource() {
-    const res = "steam";
+    const res = 'steam';
     switch (this.layer) {
       default:
         break;

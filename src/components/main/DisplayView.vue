@@ -9,8 +9,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useStore } from "@/stores/main";
-import { useSteamStore } from "@/stores/steam";
+import { useStore, useSteamStore } from "@/stores/main";
 import { displayNumber } from "@/stores/main/utils";
 import { computed } from "vue";
 const steamStore = useSteamStore();
