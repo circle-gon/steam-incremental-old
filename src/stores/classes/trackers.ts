@@ -6,7 +6,6 @@ import type {
   TrackType,
   ContentType,
   StatTrackerType,
-  AchievementTrackerType,
 } from "../main/types";
 class StatTracker implements StatTrackerType {
   resList: string[];

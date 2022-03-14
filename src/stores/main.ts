@@ -1,4 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
+import type { StateTree } from 'pinia';
 import type {
   GenericObjectType,
   BasicType,
@@ -8,31 +9,26 @@ import { getTime, copy, inRP } from './main/utils';
 import { StatTracker } from './classes/trackers';
 import { Upgrades } from './classes/upgrades';
 import { Resource } from './classes/resource';
-import { Keypress } from './classes/keypress';
 import LZString from 'lz-string';
 import { useSteamStore } from './steam';
 import { useTabsStore } from './tabs';
 import { useNotificationStore } from './notifications';
 import { useStatsStore } from './stats';
-import { useKeypressStore } from './keypress';
 
 const ALL_STORES = {
   steam: useSteamStore,
   tabs: useTabsStore,
   notify: useNotificationStore,
   stats: useStatsStore,
-  keypress: useKeypressStore,
 };
 export const useStore = defineStore('main', {
   state: () => ({
-    // stats stuff
-    // may replace with store
-
     // modal stuff (but really small)
     modal: '',
     // notifications stuff
     // other 'internal' stuff but should be split into the other stores
     // to not use use[xxxx]Store for everything
+    keypresses: new Set<string>(),
     internals: {
       timestamp: getTime(),
       rafID: 0,
@@ -65,8 +61,10 @@ export const useStore = defineStore('main', {
         }
         return data;
       };
-      const save = {
-        ...this.$state,
+      let save: { [key: string]: StateTree } = {
+        settings: {
+          ...this.settings,
+        },
       };
       Object.entries(REPLACE_PATH).forEach((entries) => {
         save[entries[0]] = entries[1]().$state;
@@ -144,7 +142,7 @@ export const useStore = defineStore('main', {
       }
       this.$reset();
       Object.values(ALL_STORES).forEach((store) => {
-        store.$reset();
+        store().$reset();
       });
       useSteamStore().$reset();
       this.init(false);
@@ -235,8 +233,7 @@ export const REPLACE_PATH = {
   stats: useStatsStore,
 };
 if (import.meta.hot !== undefined) {
-  const hotModules = Object.values(ALL_STORES);
-  hotModules.push(useStore);
+  const hotModules = [...Object.values(ALL_STORES), useStore];
   for (const md of hotModules) {
     import.meta.hot.accept(acceptHMRUpdate(md, import.meta.hot));
   }
@@ -251,6 +248,5 @@ export {
   useSteamStore,
   useTabsStore,
   useNotificationStore,
-  useStatsStore,
-  useKeypressStore,
+  useStatsStore
 };

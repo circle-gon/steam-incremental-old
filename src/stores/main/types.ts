@@ -145,12 +145,6 @@ export interface LoreType {
   unlocked: () => boolean;
   textRequire: string;
 }
-export interface AchievementTrackerType {
-  achievesUnlocked: number[];
-  knowPoints: number;
-  updateAchieves: () => void;
-  hasAchieve: (row: number, col: number) => boolean;
-}
 export interface SettingButtonType {
   type: "button";
   display: () => string | null;
@@ -167,10 +161,4 @@ export type RealSettingButtonType = SettingButtonType | SettingButtonInputType;
 export interface NotificationType {
   text: string;
   time: number;
-}
-export interface KeypressClassType {
-  keypresses: Set<string>;
-  keydown: (e: KeyboardEvent) => void;
-  keyup: (e: KeyboardEvent) => void;
-  clear: () => void;
 }
