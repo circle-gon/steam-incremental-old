@@ -101,6 +101,8 @@ export interface OneTimeUpgradeType extends CoreUpgradeType {
 export interface GenericObjectType {
   [key: string]: BasicType;
 }
+export type GenericArrayType = BasicType[]
+export type GenericObjectTypeType = GenericArrayType | GenericObjectType
 export type BasicType =
   | string
   | number

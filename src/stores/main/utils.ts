@@ -1,5 +1,6 @@
-import type { GenericObjectType } from './types';
+import type { GenericObjectType, GenericObjectTypeType } from './types';
 import { REPLACE_PATH } from '../main';
+import { isInputTypeArray, isInputTypeObject, isInputType } from './typeUtils';
 // number display
 const displayNumber = function (what: number, prec = 2, overide = false) {
   // if number is interger, display it as whole
@@ -67,11 +68,75 @@ const R = function <Type, OtherType>(
   return item !== undefined ? item : replacer;
 };
 const inRP = function (name: string) {
-  const val = Object.keys(REPLACE_PATH).find(element => {
-    return name.startsWith(`.${element}`)
-  }) as keyof typeof REPLACE_PATH
-  if (val === undefined) return undefined
- return {obj: REPLACE_PATH[val], text: `.${val}`}
+  const val = Object.keys(REPLACE_PATH).find((element) => {
+    return name.startsWith(`.${element}`);
+  }) as keyof typeof REPLACE_PATH;
+  if (val === undefined) return undefined;
+  return { obj: REPLACE_PATH[val], text: `.${val}` };
+};
+const getFullType = function (obj: unknown, showFullClass: boolean) {
+  // get toPrototypeString() of obj (handles all types)
+  if (showFullClass && typeof obj === 'object') {
+    return Object.prototype.toString.call(obj);
+  }
+  if (obj == null) {
+    return (obj + '').toLowerCase();
+  } // implicit toString() conversion
+  const deepReplace = <T extends GenericObjectTypeType, Q extends T>(
+    obj: T,
+    data: Q,
+    modifier: (obj: T, data: Q, key: string) => boolean
+  ) => {
+    if (isInputTypeArray(obj) && isInputTypeArray(data)) {
+      for (const key of obj.keys()) {
+        const val = obj[key];
+        const otherData = data[key];
+        if (isInputType(val) && isInputType(otherData)) {
+          //if (modifier(val, otherData, key)) continue;
+          deepReplace(val, otherData, modifier);
+        } else {
+          data[key] = val;
+        }
+      }
+    } else if (isInputTypeObject(obj) && isInputTypeObject(data)) {
+      //console.log(obj)
+      for (const key of Object.keys(obj)) {
+        const val = obj[key];
+        const otherData = data[key];
+        if (isInputType(val) && isInputType(otherData)) {
+          deepReplace(val, otherData, modifier);
+        } else {
+          data[key] = val;
+        }
+      }
+    } else {
+      throw new TypeError(
+        `Invalid type of input: input obj is type ${getFullType(
+          obj,
+          false
+        )}, while input data is ${getFullType(obj, false)}`
+      );
+    }
+  };
+  const deepType = Object.prototype.toString
+    .call(obj)
+    .slice(8, -1)
+    .toLowerCase();
+  if (deepType === 'generatorfunction') {
+    return 'function';
+  }
+
+  // Prevent overspecificity (for example, [object HTMLDivElement], etc).
+  // Account for functionish Regexp (Android <=2.3), functionish <object> element (Chrome <=57, Firefox <=52), etc.
+  // String.prototype.match is universally supported.
+
+  return deepType.match(
+    /^(array|bigint|date|error|function|generator|regexp|symbol)$/
+  )
+    ? deepType
+    : typeof obj === 'object' || typeof obj === 'function'
+    ? 'object'
+    : typeof obj;
 };
 const copy = function (v: GenericObjectType, keys: string[], isInclude = true) {
   const r: GenericObjectType = {};
@@ -94,4 +159,5 @@ export {
   copy,
   inRP,
   getTimePassed,
+  getFullType,
 };

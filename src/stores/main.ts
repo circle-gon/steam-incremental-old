@@ -1,11 +1,10 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import type { StateTree } from 'pinia';
+import type { StateTree, Store } from 'pinia';
 import type {
   GenericObjectType,
-  BasicType,
   OneTimeSteamUpgradeType,
 } from './main/types';
-import { getTime, copy, inRP } from './main/utils';
+import { getTime, copy, inRP, getFullType } from './main/utils';
 import { StatTracker } from './classes/trackers';
 import { Upgrades } from './classes/upgrades';
 import { Resource } from './classes/resource';
@@ -153,7 +152,7 @@ export const useStore = defineStore('main', {
       useNotificationStore().notify('Game saved.');
     },
     loadSave() {
-      const performSaveImport = (cache?: {
+      /*const performSaveImport = (cache?: {
         stack: Array<string | number>;
         data: BasicType;
       }) => {
@@ -214,7 +213,7 @@ export const useStore = defineStore('main', {
           }
         }
       };
-      performSaveImport();
+      performSaveImport();*/
     },
     mainGameLoop() {
       const timepassed = getTime() - this.internals.timestamp;
@@ -244,9 +243,4 @@ if (import.meta.hot !== undefined) {
     useSteamStore().init();
   });
 }
-export {
-  useSteamStore,
-  useTabsStore,
-  useNotificationStore,
-  useStatsStore
-};
+export { useSteamStore, useTabsStore, useNotificationStore, useStatsStore };
