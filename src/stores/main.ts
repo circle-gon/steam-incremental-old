@@ -1,10 +1,12 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import type { StateTree, Store } from 'pinia';
+import type { StateTree } from 'pinia';
+import { isInputTypeObject } from './main/typeUtils';
 import type {
   GenericObjectType,
   OneTimeSteamUpgradeType,
+  BasicType,
 } from './main/types';
-import { getTime, copy, inRP, getFullType } from './main/utils';
+import { getTime, copy, deepReplace } from './main/utils';
 import { StatTracker } from './classes/trackers';
 import { Upgrades } from './classes/upgrades';
 import { Resource } from './classes/resource';
@@ -60,7 +62,7 @@ export const useStore = defineStore('main', {
         }
         return data;
       };
-      let save: { [key: string]: StateTree } = {
+      const save: { [key: string]: StateTree } = {
         settings: {
           ...this.settings,
         },
@@ -214,6 +216,53 @@ export const useStore = defineStore('main', {
         }
       };
       performSaveImport();*/
+      let loadedSave = {};
+      const saveToImport = this.internals.save
+        ? this.internals.save
+        : localStorage.getItem('sgsave');
+      if (!saveToImport) return;
+      try {
+        loadedSave = JSON.parse(
+          LZString.decompressFromBase64(saveToImport) || ''
+        );
+      } catch (e) {
+        // validation of save
+        console.error(e);
+        useNotificationStore().notify(
+          'An error occured while importing your save.'
+        );
+        return;
+      }
+      // this didn't happen but just in case
+      if (loadedSave === null) {
+        useNotificationStore().notify('Save is empty or is invalid.');
+        return;
+      }
+      if (isInputTypeObject(this)) {
+        deepReplace(
+          loadedSave,
+          this,
+          (obj: BasicType, data: BasicType, key: string | number) => {
+            const str = Object.keys(REPLACE_PATH).find((element) => {
+              return (
+                element === (typeof key === 'string' ? key : key.toString())
+              );
+            }) as keyof typeof REPLACE_PATH;
+            if (str !== undefined) {
+              const dataNew = REPLACE_PATH[str]();
+              if (isInputTypeObject(dataNew) && isInputTypeObject(obj)) {
+                deepReplace(obj, dataNew);
+                return true;
+              } else {
+                throw new TypeError(
+                  'store data should be object or replace data should be object'
+                );
+              }
+            }
+            return false;
+          }
+        );
+      }
     },
     mainGameLoop() {
       const timepassed = getTime() - this.internals.timestamp;
@@ -231,12 +280,17 @@ export const REPLACE_PATH = {
   steam: useSteamStore,
   stats: useStatsStore,
 };
-if (import.meta.hot !== undefined) {
+
+function isImportHot(hot: unknown): hot is Required<ImportMeta>['hot'] {
+  return hot !== undefined;
+}
+const hot = import.meta.hot;
+if (isImportHot(hot)) {
   const hotModules = [...Object.values(ALL_STORES), useStore];
   for (const md of hotModules) {
-    import.meta.hot.accept(acceptHMRUpdate(md, import.meta.hot));
+    hot.accept(acceptHMRUpdate(md, import.meta.hot));
   }
-  import.meta.hot.accept((m) => {
+  hot.accept((m) => {
     if (!m.useSteamStore) return;
     console.log('[dev]: hot reload steam.ts -> init');
     // hot

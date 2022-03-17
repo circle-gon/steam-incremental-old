@@ -1,6 +1,9 @@
-import type { GenericObjectType, GenericObjectTypeType } from './types';
-import { REPLACE_PATH } from '../main';
-import { isInputTypeArray, isInputTypeObject, isInputType } from './typeUtils';
+import type {
+  GenericObjectType,
+  GenericObjectTypeType,
+  BasicType,
+} from "./types";
+import { isInputTypeArray, isInputTypeObject, isInputType } from "./typeUtils";
 // number display
 const displayNumber = function (what: number, prec = 2, overide = false) {
   // if number is interger, display it as whole
@@ -8,7 +11,7 @@ const displayNumber = function (what: number, prec = 2, overide = false) {
     return what.toString();
   } else if (what < 1e9) {
     if (what > 1e3) {
-      return what.toLocaleString('en-US');
+      return what.toLocaleString("en-US");
     } else if (Number.isInteger(what * 10) && !overide) {
       return what.toFixed(1);
     } else {
@@ -21,32 +24,32 @@ const displayNumber = function (what: number, prec = 2, overide = false) {
 // time formatting
 const prettyTimeAsTotal = function (data: number) {
   let remain;
-  const timesList = ['seconds', 'minutes', 'hours', 'days'];
+  const timesList = ["seconds", "minutes", "hours", "days"];
   const text = [];
   const milliLeft = data % 1000;
   data = (data - milliLeft) / 1000;
   remain = data % 60;
   data = (data - remain) / 60;
-  text.push((remain + milliLeft / 1000).toFixed(2) + ' seconds');
+  text.push((remain + milliLeft / 1000).toFixed(2) + " seconds");
   if (data >= 60) {
     remain = data % 60;
     data = (data - remain) / 60;
-    text.push(remain + ' minutes');
+    text.push(remain + " minutes");
   }
   if (data >= 60 && text.length === 2) {
     remain = data % 60;
     data = (data - remain) / 60;
-    text.push(remain + ' hours');
+    text.push(remain + " hours");
   }
   if (data !== 0) {
-    text.push(data + ' ' + timesList[text.length]);
+    text.push(data + " " + timesList[text.length]);
   }
-  const extraText = text.length > 1 ? ', and ' : '';
+  const extraText = text.length > 1 ? ", and " : "";
   return (
     text
       .reverse()
       .slice(0, text.length - 1)
-      .join(', ') +
+      .join(", ") +
     extraText +
     text[text.length - 1]
   );
@@ -67,63 +70,20 @@ const R = function <Type, OtherType>(
 ) {
   return item !== undefined ? item : replacer;
 };
-const inRP = function (name: string) {
-  const val = Object.keys(REPLACE_PATH).find((element) => {
-    return name.startsWith(`.${element}`);
-  }) as keyof typeof REPLACE_PATH;
-  if (val === undefined) return undefined;
-  return { obj: REPLACE_PATH[val], text: `.${val}` };
-};
 const getFullType = function (obj: unknown, showFullClass: boolean) {
   // get toPrototypeString() of obj (handles all types)
-  if (showFullClass && typeof obj === 'object') {
+  if (showFullClass && typeof obj === "object") {
     return Object.prototype.toString.call(obj);
   }
   if (obj == null) {
-    return (obj + '').toLowerCase();
+    return (obj + "").toLowerCase();
   } // implicit toString() conversion
-  const deepReplace = <T extends GenericObjectTypeType, Q extends T>(
-    obj: T,
-    data: Q,
-    modifier: (obj: T, data: Q, key: string) => boolean
-  ) => {
-    if (isInputTypeArray(obj) && isInputTypeArray(data)) {
-      for (const key of obj.keys()) {
-        const val = obj[key];
-        const otherData = data[key];
-        if (isInputType(val) && isInputType(otherData)) {
-          //if (modifier(val, otherData, key)) continue;
-          deepReplace(val, otherData, modifier);
-        } else {
-          data[key] = val;
-        }
-      }
-    } else if (isInputTypeObject(obj) && isInputTypeObject(data)) {
-      //console.log(obj)
-      for (const key of Object.keys(obj)) {
-        const val = obj[key];
-        const otherData = data[key];
-        if (isInputType(val) && isInputType(otherData)) {
-          deepReplace(val, otherData, modifier);
-        } else {
-          data[key] = val;
-        }
-      }
-    } else {
-      throw new TypeError(
-        `Invalid type of input: input obj is type ${getFullType(
-          obj,
-          false
-        )}, while input data is ${getFullType(obj, false)}`
-      );
-    }
-  };
   const deepType = Object.prototype.toString
     .call(obj)
     .slice(8, -1)
     .toLowerCase();
-  if (deepType === 'generatorfunction') {
-    return 'function';
+  if (deepType === "generatorfunction") {
+    return "function";
   }
 
   // Prevent overspecificity (for example, [object HTMLDivElement], etc).
@@ -134,9 +94,47 @@ const getFullType = function (obj: unknown, showFullClass: boolean) {
     /^(array|bigint|date|error|function|generator|regexp|symbol)$/
   )
     ? deepType
-    : typeof obj === 'object' || typeof obj === 'function'
-    ? 'object'
+    : typeof obj === "object" || typeof obj === "function"
+    ? "object"
     : typeof obj;
+};
+const deepReplace = function (
+  obj: GenericObjectTypeType,
+  data: GenericObjectTypeType,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  modifier = (obj: BasicType, data: BasicType, key: string | number) => false
+) {
+  if (isInputTypeArray(obj) && isInputTypeArray(data)) {
+    for (const key of obj.keys()) {
+      const val = obj[key];
+      const otherData = data[key];
+      if (modifier(val, otherData, key)) continue;
+      if (isInputType(val) && isInputType(otherData)) {
+        deepReplace(val, otherData, modifier);
+      } else {
+        data[key] = val;
+      }
+    }
+  } else if (isInputTypeObject(obj) && isInputTypeObject(data)) {
+    //console.log(obj)
+    for (const key of Object.keys(obj)) {
+      const val = obj[key];
+      const otherData = data[key];
+      if (modifier(val, otherData, key)) continue;
+      if (isInputType(val) && isInputType(otherData)) {
+        deepReplace(val, otherData, modifier);
+      } else {
+        data[key] = val;
+      }
+    }
+  } else {
+    throw new TypeError(
+      `Invalid type of input: input obj is type ${getFullType(
+        obj,
+        false
+      )}, while input data is ${getFullType(obj, false)}`
+    );
+  }
 };
 const copy = function (v: GenericObjectType, keys: string[], isInclude = true) {
   const r: GenericObjectType = {};
@@ -157,7 +155,7 @@ export {
   isUndef,
   R,
   copy,
-  inRP,
   getTimePassed,
   getFullType,
+  deepReplace,
 };

@@ -2,11 +2,7 @@
 // their values
 // does require resources list to equal obj[res]
 // ie. "steam" -> obj.steam
-import type {
-  TrackType,
-  ContentType,
-  StatTrackerType,
-} from "../main/types";
+import type { TrackType, ContentType, StatTrackerType } from "../main/types";
 class StatTracker implements StatTrackerType {
   resList: string[];
   resources: TrackType;

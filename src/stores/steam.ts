@@ -1,21 +1,20 @@
-import { defineStore } from 'pinia';
-import { Resource } from './classes/resource';
+import { defineStore } from "pinia";
+import { Resource } from "./classes/resource";
 import type {
   ResourceQueueType,
   SteamResourceType,
-  BasicType,
   QueueType,
-} from './main/types';
-import { isOfType } from './main/types';
-import { StatTracker } from './classes/trackers';
-import { OneTimeUpgrades } from './classes/upgrades';
-import { linear, upThenDown } from './main/queue-gpt';
+} from "./main/types";
+import { isOfType } from "./main/types";
+import { StatTracker } from "./classes/trackers";
+import { OneTimeUpgrades } from "./classes/upgrades";
+import { linear, upThenDown } from "./main/queue-gpt";
 
 const baseConfigFactory = function () {
   return { layer: 1, data: { show: false } } as const;
 };
 const autoCap = 0.4;
-export const useSteamStore = defineStore('steam', {
+export const useSteamStore = defineStore("steam", {
   state: () => ({
     steam: new Resource(),
     water: new Resource({
@@ -25,19 +24,19 @@ export const useSteamStore = defineStore('steam', {
     heat: new Resource({ req: 1 }) as ResourceQueueType,
     fill: new Resource({ req: 1 }) as ResourceQueueType,
     isDoing: false,
-    statTracker: new StatTracker(['steam']),
+    statTracker: new StatTracker(["steam"]),
     oneUpgrades: {
       stronger: new OneTimeUpgrades(
-        'Getting stronger!',
-        'Multiplies speed of all resources by 2',
+        "Getting stronger!",
+        "Multiplies speed of all resources by 2",
         1,
         1,
         () => true,
         baseConfigFactory()
       ),
       auto: new OneTimeUpgrades(
-        'Make a Rube Goldberg machine',
-        'Automaticially fills the furnace based on your steam',
+        "Make a Rube Goldberg machine",
+        "Automaticially fills the furnace based on your steam",
         3,
         1,
         () => false,
@@ -45,7 +44,7 @@ export const useSteamStore = defineStore('steam', {
       ),
       help: new OneTimeUpgrades(
         "Welp, that wasn't fun",
-        'Changes water gain formula from m/(1 + ce^(-kx)) (gain goes up and down) to linear',
+        "Changes water gain formula from m/(1 + ce^(-kx)) (gain goes up and down) to linear",
         15,
         1,
         () => false,
@@ -89,8 +88,8 @@ export const useSteamStore = defineStore('steam', {
         auto.data.getBonus = () => {
           return (
             (this.autoFurnaceMulti * 100).toFixed(0) +
-            '%' +
-            (this.autoFurnaceMulti === autoCap ? ' (capped)' : '')
+            "%" +
+            (this.autoFurnaceMulti === autoCap ? " (capped)" : "")
           );
         };
       }
@@ -98,7 +97,7 @@ export const useSteamStore = defineStore('steam', {
     updateResources(delta: number) {
       const isDoingAttr = [];
       for (const value of Object.values(this)) {
-        if (isOfType<ResourceQueueType>(value, 'queueData')) {
+        if (isOfType<ResourceQueueType>(value, "queueData")) {
           value.update();
           isDoingAttr.push(value.isEmpty(false));
         }
@@ -123,7 +122,7 @@ export const useSteamStore = defineStore('steam', {
       const value = this[res];
       if (
         this.isUseable(res) &&
-        (res === 'fill' ? this.fill.queueData.canDo() : true)
+        (res === "fill" ? this.fill.queueData.canDo() : true)
       ) {
         value.addNewQueue(value.multi);
       }
@@ -142,15 +141,6 @@ export const useSteamStore = defineStore('steam', {
         this.heat.owned -= this.heat.queueData.req;
         this.steam.owned += this.steam.multi;
       }
-    },
-    loadSaveFromString(path: string, data: BasicType) {
-      if (path.match(/queue/gi)) {
-        return;
-      }
-      if (path.match(/.water.req/gi)) {
-        data = Infinity;
-      }
-      Function('state', 'data', 'state' + path + '=data')(this, data);
     },
     update(delta: number) {
       this.updateMulti();

@@ -1,7 +1,7 @@
-import { defineStore } from 'pinia';
-import type { NotificationType } from './main/types';
+import { defineStore } from "pinia";
+import type { NotificationType } from "./main/types";
 
-export const useNotificationStore = defineStore('notifications', {
+export const useNotificationStore = defineStore("notifications", {
   state: () => ({
     notifications: [] as NotificationType[],
   }),

@@ -19,17 +19,15 @@
 <script setup lang="ts">
 import { useTabsStore } from "@/stores/main";
 import type { TabsType, InnerTabsType } from "@/stores/main/types";
-import type {
-  TabOptionsType
-} from "@/stores/main/tabTypes";
+import type { TabOptionsType } from "@/stores/main/tabTypes";
 defineProps<{
   tabList: TabsType[] | InnerTabsType[];
 }>();
 const changeTab = (tab: TabOptionsType) => {
-  useTabsStore().tab = tab
+  useTabsStore().tab = tab;
 };
 
 const changeInnerTab = (tab: string) => {
-  useTabsStore().changeInnerTab(tab)
+  useTabsStore().changeInnerTab(tab);
 };
 </script>

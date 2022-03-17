@@ -1,11 +1,10 @@
-import { defineStore } from 'pinia';
-import { ACHIEVEMENTS } from './main/tabs';
-import type { BasicType } from './main/types';
+import { defineStore } from "pinia";
+import { ACHIEVEMENTS } from "./main/tabs";
 
 function getIdFromData(row: number, col: number) {
   return row.toString() + col.toString();
 }
-export const useStatsStore = defineStore('stats', {
+export const useStatsStore = defineStore("stats", {
   state: () => ({
     totalTimePlayed: 0,
     // may replace with store
@@ -15,7 +14,7 @@ export const useStatsStore = defineStore('stats', {
     knowPoints() {
       let points = 0;
       for (const id of this.achievesUnlocked) {
-        const matches = id.split('');
+        const matches = id.split("");
         const first = parseInt(matches[0]);
         const second = parseInt(matches[1]);
         points += ACHIEVEMENTS[first][second].bonus;
@@ -38,9 +37,6 @@ export const useStatsStore = defineStore('stats', {
           }
         }
       }
-    },
-    loadSaveFromString(path: string, data: BasicType) {
-      Function('state', 'data', 'state' + path + '=data')(this, data);
     },
   },
 });
