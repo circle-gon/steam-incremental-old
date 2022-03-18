@@ -23,36 +23,11 @@ const displayNumber = function (what: number, prec = 2, overide = false) {
 };
 // time formatting
 const prettyTimeAsTotal = function (data: number) {
-  let remain;
-  const timesList = ["seconds", "minutes", "hours", "days"];
-  const text = [];
-  const milliLeft = data % 1000;
-  data = (data - milliLeft) / 1000;
-  remain = data % 60;
-  data = (data - remain) / 60;
-  text.push((remain + milliLeft / 1000).toFixed(2) + " seconds");
-  if (data >= 60) {
-    remain = data % 60;
-    data = (data - remain) / 60;
-    text.push(remain + " minutes");
-  }
-  if (data >= 60 && text.length === 2) {
-    remain = data % 60;
-    data = (data - remain) / 60;
-    text.push(remain + " hours");
-  }
-  if (data !== 0) {
-    text.push(data + " " + timesList[text.length]);
-  }
-  const extraText = text.length > 1 ? ", and " : "";
-  return (
-    text
-      .reverse()
-      .slice(0, text.length - 1)
-      .join(", ") +
-    extraText +
-    text[text.length - 1]
-  );
+
+  const hours = Math.floor(data / 1000 / 60 / 60);
+  const minutes = Math.floor(data / 1000 / 60 - hours * 60);
+  const seconds = (data / 1000 - hours * 3600 - minutes * 60).toFixed(2);
+  return `Hours: ${hours}, minutes: ${minutes}, seconds: ${seconds}`;
 };
 // util functions
 const getTime = function () {
