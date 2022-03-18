@@ -3,13 +3,13 @@
     You have made a total of
     {{ tracked.steam.totalMade }} steam.<br />
     You have been playing for
-    {{ prettyTimeAsTotal(store.stats.totalTimePlayed) }}.
+    {{ prettyTimeAsTotal(statsStore.totalTimePlayed) }}.
   </div>
 </template>
 <script setup lang="ts">
-import { useStore, useSteamStore } from "@/stores/main";
+import { useStatsStore, useSteamStore } from "@/stores/main";
 import { prettyTimeAsTotal } from "@/stores/main/utils";
 const steamStore = useSteamStore();
-const store = useStore();
+const statsStore = useStatsStore();
 const tracked = steamStore.statTracker.resources;
 </script>

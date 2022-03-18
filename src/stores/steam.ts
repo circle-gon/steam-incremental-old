@@ -104,7 +104,7 @@ export const useSteamStore = defineStore("steam", {
       }
       this.isDoing = isDoingAttr.includes(false);
       if (OneTimeUpgrades.use(this.oneUpgrades.auto)) {
-        const multi = this.autoFurnaceMulti;
+        const multi = this.autoFurnaceMulti / 1000;
         if (this.heat.isNotFull && this.heat.queueData.canDo()) {
           const result = this.heat.multi * multi * delta;
           this.heat.owned += result;
