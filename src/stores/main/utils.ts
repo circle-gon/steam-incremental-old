@@ -23,7 +23,6 @@ const displayNumber = function (what: number, prec = 2, overide = false) {
 };
 // time formatting
 const prettyTimeAsTotal = function (data: number) {
-
   const hours = Math.floor(data / 1000 / 60 / 60);
   const minutes = Math.floor(data / 1000 / 60 - hours * 60);
   const seconds = (data / 1000 - hours * 3600 - minutes * 60).toFixed(2);
@@ -73,43 +72,37 @@ const getFullType = function (obj: unknown, showFullClass: boolean) {
     ? "object"
     : typeof obj;
 };
-const deepReplace = function (
-  obj: GenericObjectTypeType,
-  data: GenericObjectTypeType,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  modifier = (obj: BasicType, data: BasicType, key: string | number) => false
-) {
-  if (isInputTypeArray(obj) && isInputTypeArray(data)) {
-    for (const key of obj.keys()) {
-      const val = obj[key];
-      const otherData = data[key];
-      if (modifier(val, otherData, key)) continue;
-      if (isInputType(val) && isInputType(otherData)) {
-        deepReplace(val, otherData, modifier);
+export function isObject(obj: unknown): obj is object {
+  return obj !== null && typeof obj === "object";
+}
+function keyIsObject(
+  obj: object,
+  key: string | number | symbol
+): key is keyof typeof obj {
+  const val = obj[key as keyof typeof obj];
+  return isObject(val);
+}
+
+const deepReplace = function mergeDeep<T extends Q, Q extends object>(
+  target: T,
+  source: Q,
+  modifier: (target: unknown, source: unknown, key: string) => boolean = () =>
+    false
+): T {
+  if (isObject(target) && isObject(source)) {
+    for (const key in source) {
+      if (!Object.prototype.hasOwnProperty.call(source, key)) continue;
+      if (modifier(target, source, key)) continue;
+      //console.log(key)
+      if (keyIsObject(source, key)) {
+        mergeDeep(target[key], source[key], modifier);
       } else {
-        data[key] = val;
+        Object.assign(target, { [key]: source[key] });
       }
     }
-  } else if (isInputTypeObject(obj) && isInputTypeObject(data)) {
-    //console.log(obj)
-    for (const key of Object.keys(obj)) {
-      const val = obj[key];
-      const otherData = data[key];
-      if (modifier(val, otherData, key)) continue;
-      if (isInputType(val) && isInputType(otherData)) {
-        deepReplace(val, otherData, modifier);
-      } else {
-        data[key] = val;
-      }
-    }
-  } else {
-    throw new TypeError(
-      `Invalid type of input: input obj is type ${getFullType(
-        obj,
-        false
-      )}, while input data is ${getFullType(obj, false)}`
-    );
   }
+
+  return target;
 };
 const copy = function (v: GenericObjectType, keys: string[], isInclude = true) {
   const r: GenericObjectType = {};

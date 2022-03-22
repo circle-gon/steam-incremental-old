@@ -10,7 +10,8 @@
     "lint": "eslint . --ext .vue,.cjs,.ts --fix",
     "typecheck": "vue-tsc",
     "tsc-watch": "vue-tsc -w",
-    "pretty-watch": "onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}"
+    "pretty-watch": "onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}",
+    "lint-watch": "onchange \"**/*\" -- eslint . --ext .vue,.cjs,.ts --fix --ignore-unknown {{changed}}"
   },
   "dependencies": {
     "lz-string": "^1.4.4",
