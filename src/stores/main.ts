@@ -244,9 +244,10 @@ export const useStore = defineStore('main', {
           const str = Object.keys(REPLACE_PATH).find((element) => {
             return element === key;
           }) as keyof typeof REPLACE_PATH;
-          if (str !== undefined && isObject(obj)) {
+          //debugger
+          if (str !== undefined && isObject(data[key])) {
             const dataNew = REPLACE_PATH[str]();
-            deepReplace(dataNew, obj);
+            deepReplace(dataNew, data[key]);
             return true;
           }
           return false;
@@ -274,7 +275,7 @@ function isImportHot(hot: unknown): hot is Required<ImportMeta>['hot'] {
   return typeof hot === 'object' && hot !== null && !Array.isArray(hot);
 }
 const hot = import.meta.hot;
-if (isImportHot(hot)) {
+if (hot && isImportHot(hot)) {
   const hotModules = [...Object.values(ALL_STORES), useStore];
   for (const md of hotModules) {
     hot.accept(acceptHMRUpdate(md, import.meta.hot));

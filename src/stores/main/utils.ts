@@ -2,8 +2,8 @@ import type {
   GenericObjectType,
   GenericObjectTypeType,
   BasicType,
-} from "./types";
-import { isInputTypeArray, isInputTypeObject, isInputType } from "./typeUtils";
+} from './types';
+import { isInputTypeArray, isInputTypeObject, isInputType } from './typeUtils';
 // number display
 const displayNumber = function (what: number, prec = 2, overide = false) {
   // if number is interger, display it as whole
@@ -11,7 +11,7 @@ const displayNumber = function (what: number, prec = 2, overide = false) {
     return what.toString();
   } else if (what < 1e9) {
     if (what > 1e3) {
-      return what.toLocaleString("en-US");
+      return what.toLocaleString('en-US');
     } else if (Number.isInteger(what * 10) && !overide) {
       return what.toFixed(1);
     } else {
@@ -46,18 +46,18 @@ const R = function <Type, OtherType>(
 };
 const getFullType = function (obj: unknown, showFullClass: boolean) {
   // get toPrototypeString() of obj (handles all types)
-  if (showFullClass && typeof obj === "object") {
+  if (showFullClass && typeof obj === 'object') {
     return Object.prototype.toString.call(obj);
   }
   if (obj == null) {
-    return (obj + "").toLowerCase();
+    return (obj + '').toLowerCase();
   } // implicit toString() conversion
   const deepType = Object.prototype.toString
     .call(obj)
     .slice(8, -1)
     .toLowerCase();
-  if (deepType === "generatorfunction") {
-    return "function";
+  if (deepType === 'generatorfunction') {
+    return 'function';
   }
 
   // Prevent overspecificity (for example, [object HTMLDivElement], etc).
@@ -68,12 +68,12 @@ const getFullType = function (obj: unknown, showFullClass: boolean) {
     /^(array|bigint|date|error|function|generator|regexp|symbol)$/
   )
     ? deepType
-    : typeof obj === "object" || typeof obj === "function"
-    ? "object"
+    : typeof obj === 'object' || typeof obj === 'function'
+    ? 'object'
     : typeof obj;
 };
 export function isObject(obj: unknown): obj is object {
-  return obj !== null && typeof obj === "object";
+  return obj !== null && typeof obj === 'object';
 }
 function keyIsObject(
   obj: object,
@@ -93,11 +93,12 @@ const deepReplace = function mergeDeep<T extends Q, Q extends object>(
     for (const key in source) {
       if (!Object.prototype.hasOwnProperty.call(source, key)) continue;
       if (modifier(target, source, key)) continue;
-      //console.log(key)
+      //debugger;
       if (keyIsObject(source, key)) {
         mergeDeep(target[key], source[key], modifier);
       } else {
         Object.assign(target, { [key]: source[key] });
+
       }
     }
   }
