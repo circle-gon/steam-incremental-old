@@ -75,14 +75,6 @@ const getFullType = function (obj: unknown, showFullClass: boolean) {
 export function isObject(obj: unknown): obj is object {
   return obj !== null && typeof obj === 'object';
 }
-function keyIsObject(
-  obj: object,
-  key: string | number | symbol
-): key is keyof typeof obj {
-  const val = obj[key as keyof typeof obj];
-  return isObject(val);
-}
-
 const deepReplace = function mergeDeep<T extends Q, Q extends object>(
   target: T,
   source: Q,
@@ -91,14 +83,14 @@ const deepReplace = function mergeDeep<T extends Q, Q extends object>(
 ): T {
   if (isObject(target) && isObject(source)) {
     for (const key in source) {
-      if (!Object.prototype.hasOwnProperty.call(source, key)) continue;
+      if (!Object.hasOwn(source, key)) continue;
       if (modifier(target, source, key)) continue;
       //debugger;
-      if (keyIsObject(source, key)) {
-        mergeDeep(target[key], source[key], modifier);
+      const val = source[key]
+      if (typeof val === 'object') {
+        mergeDeep(target[key], val, modifier);
       } else {
         Object.assign(target, { [key]: source[key] });
-
       }
     }
   }

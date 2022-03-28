@@ -247,7 +247,7 @@ export const useStore = defineStore('main', {
           //debugger
           if (str !== undefined && isObject(data[key])) {
             const dataNew = REPLACE_PATH[str]();
-            deepReplace(dataNew, data[key]);
+            deepReplace(dataNew, data);
             return true;
           }
           return false;
