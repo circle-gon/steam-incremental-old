@@ -32,4 +32,6 @@ const getNextLore = function () {
   }
   return text;
 };
+// prevent ts-prune from erroring the functions below
+// ts-prune-ignore-next
 export { getTab, getSubtabs, getNextLore, getComputedTab };

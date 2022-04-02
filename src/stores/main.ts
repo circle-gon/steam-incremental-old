@@ -197,7 +197,7 @@ const useStore = defineStore('main', {
 });
 
 // store data
-const KEEP_STORES = ['steam', 'stats']
+const KEEP_STORES = ['steam', 'stats'];
 const ALL_STORES = {
   steam: useSteamStore,
   tabs: useTabsStore,
@@ -205,11 +205,8 @@ const ALL_STORES = {
   stats: useStatsStore,
 };
 const REPLACE_PATH = Object.fromEntries(
-  Object.entries(ALL_STORES).filter((item) =>
-    KEEP_STORES.includes(item[0])
-  )
+  Object.entries(ALL_STORES).filter((item) => KEEP_STORES.includes(item[0]))
 );
-
 
 // hot reloading
 function isImportHot(hot: unknown): hot is Required<ImportMeta>['hot'] {
@@ -230,9 +227,13 @@ if (hot && isImportHot(hot)) {
 }
 
 export {
-  useSteamStore,
-  useTabsStore,
-  useStatsStore,
-  useNotificationStore,
   useStore,
+  useSteamStore,
+  // prevent ts-prune from erroring on the functions below
+  // ts-prune-ignore-next
+  useTabsStore,
+  // ts-prune-ignore-next
+  useStatsStore,
+  // ts-prune-ignore-next
+  useNotificationStore,
 };

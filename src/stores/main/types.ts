@@ -1,13 +1,40 @@
 import type { TabOptionsType, InnerTabOptionsType } from './tabTypes';
 
 // unexported types
+
+// generic types
 type BasicType =
   | string
   | number
   | boolean
   | { [key: string]: BasicType }
   | BasicType[];
+interface GenericObjectType {
+  [key: string]: BasicType;
+}
+
+// setting buttons
+interface InputType {
+  min: number;
+  max: number;
+  getValue: () => number;
+  result: (r: number) => number;
+}
+interface SettingButtonType {
+  type: 'button';
+  display: () => string | null;
+  do: () => void;
+}
+interface SettingButtonInputType {
+  type: 'input';
+  display: () => string | null;
+  doInput: (value: number) => void;
+  other: InputType;
+}
 type RealSettingButtonType = SettingButtonType | SettingButtonInputType;
+
+// upgrades
+type UpgradeDataType = { show: false } | { show: true; getBonus: () => string };
 interface CoreUpgradeType {
   name: string;
   desc: string;
@@ -25,6 +52,27 @@ interface CoreUpgradeType {
   hasBought: () => boolean;
   data: UpgradeDataType;
 }
+// types of upgrades
+interface UpgradeType extends CoreUpgradeType {
+  getPrice: (level: number) => number;
+  getEffect: (level: number) => number;
+}
+interface OneTimeUpgradeType extends CoreUpgradeType {
+  getPrice: () => number;
+  getEffect: () => number;
+}
+
+// upgrade config
+interface CoreConfigType {
+  layer: number;
+  data: UpgradeDataType;
+}
+interface ConfigType extends CoreConfigType {
+  maxLevel?: number;
+}
+type OneTimeConfigType = CoreConfigType;
+
+// tabs
 interface CoreTabsType {
   display: string;
   actual: string;
@@ -32,23 +80,32 @@ interface CoreTabsType {
   lore?: LoreType[];
   buttons?: Array<RealSettingButtonType | undefined>[];
 }
-interface InputType {
-  min: number;
-  max: number;
-  getValue: () => number;
-  result: (r: number) => number;
-}
 interface InnerTabsType extends CoreTabsType {
   actual: InnerTabOptionsType;
 }
-type SteamResourceType = 'heat' | 'water' | 'fill';
-interface AchievementType {
-  desc: string;
-  hoverText: string;
-  img: string;
-  isUnlocked: () => boolean;
-  bonus: number;
+interface TabsType extends CoreTabsType {
+  actual: TabOptionsType;
+  subtabs: InnerTabsType[] | [];
 }
+
+// steam types
+type SteamResourceType = 'heat' | 'water' | 'fill';
+interface OneTimeSteamUpgradeType {
+  stronger: OneTimeUpgradeType;
+  auto: OneTimeUpgradeType;
+}
+
+// resource types
+interface QueueType {
+  remain: number;
+  onStart: number;
+  time: number;
+  drainFactor: number;
+  c: number;
+  lastRemain: number;
+  manual: boolean;
+}
+type GainType = (data: QueueType) => number;
 interface ResourceType {
   owned: number;
   multi: number;
@@ -66,10 +123,6 @@ interface ResourceType {
   isEmpty: (shouldEmpty?: boolean) => boolean;
   isNotFull: boolean;
 }
-type UpgradeDataType =
-  | { show: false }
-  | { show: true; getBonus: () => string };
-type GainType = (data: QueueType) => number;
 type ResourceQueueType = Required<ResourceType>;
 interface ResourceInputType {
   owned?: number;
@@ -81,79 +134,43 @@ interface ResourceInputType {
   sideEffect?: (diff: number) => void;
   canDo?: () => boolean;
 }
-interface QueueType {
-  remain: number;
-  onStart: number;
-  time: number;
-  drainFactor: number;
-  c: number;
-  lastRemain: number;
-  manual: boolean;
-}
-export interface CoreConfigType {
-  layer: number;
-  data: UpgradeDataType;
-}
-export interface ConfigType extends CoreConfigType {
-  maxLevel?: number;
-}
-export type OneTimeConfigType = CoreConfigType;
-export interface UpgradeType extends CoreUpgradeType {
-  getPrice: (level: number) => number;
-  getEffect: (level: number) => number;
-}
-export interface OneTimeUpgradeType extends CoreUpgradeType {
-  getPrice: () => number;
-  getEffect: () => number;
-}
-export interface GenericObjectType {
-  [key: string]: BasicType;
-}
-export interface OneTimeSteamUpgradeType {
-  stronger: OneTimeUpgradeType;
-  auto: OneTimeUpgradeType;
-}
-export interface TrackType {
+
+// stat tracker types
+interface TrackType {
   [key: string]: {
     totalMade: number;
     currentAmt: number;
   };
 }
-export interface ContentType {
+interface ContentType {
   [key: string]: {
     owned: number;
   };
 }
-export interface StatTrackerType {
+interface StatTrackerType {
   resList: string[];
   resources: TrackType;
   update: (content: ContentType) => void;
 }
-export interface TabsType extends CoreTabsType {
-  actual: TabOptionsType;
-  subtabs: InnerTabsType[] | [];
+
+// misc stuff
+interface AchievementType {
+  desc: string;
+  hoverText: string;
+  img: string;
+  isUnlocked: () => boolean;
+  bonus: number;
 }
-export interface LoreType {
+interface LoreType {
   text: string;
   unlocked: () => boolean;
   textRequire: string;
 }
-export interface SettingButtonType {
-  type: 'button';
-  display: () => string | null;
-  do: () => void;
-}
-export interface SettingButtonInputType {
-  type: 'input';
-  display: () => string | null;
-  doInput: (value: number) => void;
-  other: InputType;
-}
-export interface NotificationType {
+interface NotificationType {
   text: string;
   time: number;
 }
-export type {
+/*export type {
   SteamResourceType,
   InnerTabsType,
   AchievementType,
@@ -162,5 +179,60 @@ export type {
   GainType,
   ResourceQueueType,
   ResourceInputType,
-  QueueType
-}
+  QueueType,
+  CoreConfigType,
+  ConfigType,
+  OneTimeConfigType,
+  UpgradeType,
+  OneTimeUpgradeType,
+  GenericObjectType,
+  OneTimeSteamUpgradeType,
+  TrackType,
+  ContentType,
+  StatTrackerType,
+  TabsType,
+  LoreType,
+  SettingButtonType,
+  SettingButtonInputType,
+  NotificationType,
+};*/
+export type {
+  // prevent ts-prune from erroring the isTypeSupported below
+  // generic types
+  GenericObjectType,
+  // setting buttons (below)
+  // ts-prune-ignore-next
+  SettingButtonType,
+  // ts-prune-ignore-next
+  SettingButtonInputType,
+  // upgrades
+  UpgradeDataType,
+  // types of upgrades
+  UpgradeType,
+  OneTimeUpgradeType,
+  // configs
+  CoreConfigType,
+  ConfigType,
+  OneTimeConfigType,
+  // tab types
+  // ts-prune-ignore-next
+  InnerTabsType,
+  TabsType,
+  // steam types
+  SteamResourceType,
+  OneTimeSteamUpgradeType,
+  // resource types
+  QueueType,
+  GainType,
+  ResourceType,
+  ResourceQueueType,
+  ResourceInputType,
+  // stat tracker types
+  TrackType,
+  ContentType,
+  StatTrackerType,
+  // misc types
+  AchievementType,
+  LoreType,
+  NotificationType,
+};

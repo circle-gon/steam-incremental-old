@@ -83,8 +83,11 @@ const copy = function (v: GenericObjectType, keys: string[], isInclude = true) {
   }
   return r;
 };
+// prevent ts-prune from erroring the functions below
 export {
+  // ts-prune-ignore-next
   displayNumber,
+  // ts-prune-ignore-next
   prettyTimeAsTotal,
   getTime,
   R,

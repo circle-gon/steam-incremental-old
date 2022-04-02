@@ -13,14 +13,23 @@ type InnerTabKeysType = keyof InnerTabOptionsListType;
 type TabOptionsType = InnerTabKeysType | 'lore' | 'stats' | 'achieve';
 type MAIN_TAB_LIST_TYPE = Record<TabOptionsType, object>;
 
+// the tab options that can be changed for inner tabs
 export { BUSINESS_TAB_LIST, OPTIONS_TAB_LIST };
 
 export type {
-  BUSINESS_TAB_LIST_TYPE,
+  // prevent ts-prune from linting the tab types below
+  // the type form for the tabs store
+  //ts-prune-ignore-next
   MAIN_TAB_LIST_TYPE,
+  // the type equiv of the abve
+  BUSINESS_TAB_LIST_TYPE,
   OPTIONS_TAB_LIST_TYPE,
+  // actually defines the inner tab options (combined)
   InnerTabOptionsType,
+  // all choices that are possible
   TabOptionsType,
+  // the inner tab names
   InnerTabKeysType,
+  // the type form of the innerTabs
   InnerTabOptionsListType,
 };
