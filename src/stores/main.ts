@@ -1,10 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import type { StateTree } from 'pinia';
-import type {
-  GenericObjectType,
-  OneTimeSteamUpgradeType,
-  BasicType,
-} from './main/types';
+import type { GenericObjectType, OneTimeSteamUpgradeType } from './main/types';
 import { getTime, copy, deepReplace, isObject } from './main/utils';
 import { StatTracker } from './classes/trackers';
 import { Upgrades } from './classes/upgrades';
@@ -266,10 +262,7 @@ export const useStore = defineStore('main', {
     },
   },
 });
-export const REPLACE_PATH = {
-  steam: useSteamStore,
-  stats: useStatsStore,
-};
+export const REPLACE_PATH = Object.fromEntries(Object.entries(ALL_STORES).filter(item => ["steam", "stats"].includes(item[0])))
 
 function isImportHot(hot: unknown): hot is Required<ImportMeta>['hot'] {
   return typeof hot === 'object' && hot !== null && !Array.isArray(hot);

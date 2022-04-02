@@ -1,9 +1,4 @@
-import type {
-  GenericObjectType,
-  GenericObjectTypeType,
-  BasicType,
-} from './types';
-import { isInputTypeArray, isInputTypeObject, isInputType } from './typeUtils';
+import type { GenericObjectType } from './types';
 // number display
 const displayNumber = function (what: number, prec = 2, overide = false) {
   // if number is interger, display it as whole
@@ -86,7 +81,7 @@ const deepReplace = function mergeDeep<T extends Q, Q extends object>(
       if (!Object.hasOwn(source, key)) continue;
       if (modifier(target, source, key)) continue;
       //debugger;
-      const val = source[key]
+      const val = source[key];
       if (typeof val === 'object') {
         mergeDeep(target[key], val, modifier);
       } else {
