@@ -236,14 +236,14 @@ export const useStore = defineStore('main', {
       deepReplace(
         this,
         loadedSave,
-        (obj: unknown, data: unknown, key: string) => {
+        <T extends Q, Q extends object>(obj: T, data: Q key: keyof Q) => {
           const str = Object.keys(REPLACE_PATH).find((element) => {
             return element === key;
           }) as keyof typeof REPLACE_PATH;
           //debugger
-          if (str !== undefined && isObject(data[key])) {
-            const dataNew = REPLACE_PATH[str]();
-            deepReplace(dataNew, data);
+          const val = data[key]
+          if (str !== undefined && isObject(val)) {
+            deepReplace(REPLACE_PATH[str](), val);
             return true;
           }
           return false;
@@ -262,7 +262,11 @@ export const useStore = defineStore('main', {
     },
   },
 });
-export const REPLACE_PATH = Object.fromEntries(Object.entries(ALL_STORES).filter(item => ["steam", "stats"].includes(item[0])))
+export const REPLACE_PATH = Object.fromEntries(
+  Object.entries(ALL_STORES).filter((item) =>
+    ['steam', 'stats'].includes(item[0])
+  )
+);
 
 function isImportHot(hot: unknown): hot is Required<ImportMeta>['hot'] {
   return typeof hot === 'object' && hot !== null && !Array.isArray(hot);

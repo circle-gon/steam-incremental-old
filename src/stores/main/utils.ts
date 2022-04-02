@@ -21,7 +21,10 @@ const prettyTimeAsTotal = function (data: number) {
   const hours = Math.floor(data / 1000 / 60 / 60);
   const minutes = Math.floor(data / 1000 / 60 - hours * 60);
   const seconds = (data / 1000 - hours * 3600 - minutes * 60).toFixed(2);
-  return `Hours: ${hours}, minutes: ${minutes}, seconds: ${seconds}`;
+  function format(time, name, comma=true) {
+    return time > 0 ? time + (time === 1 ? ` ${name}${(comma ? ',' : '')}`) : ""
+  }
+  return `You have played the game for ${[format(hours, "hours"), format(minutes, "minutes"), format(seconds, "seconds")]}`;
 };
 // util functions
 const getTime = function () {
@@ -73,10 +76,9 @@ export function isObject(obj: unknown): obj is object {
 const deepReplace = function mergeDeep<T extends Q, Q extends object>(
   target: T,
   source: Q,
-  modifier: (target: unknown, source: unknown, key: string) => boolean = () =>
+  modifier: <T extends Q, Q extends object>(target: T, source: Q, key: keyof Q) => boolean = () =>
     false
-): T {
-  if (isObject(target) && isObject(source)) {
+): void {
     for (const key in source) {
       if (!Object.hasOwn(source, key)) continue;
       if (modifier(target, source, key)) continue;
@@ -88,9 +90,6 @@ const deepReplace = function mergeDeep<T extends Q, Q extends object>(
         Object.assign(target, { [key]: source[key] });
       }
     }
-  }
-
-  return target;
 };
 const copy = function (v: GenericObjectType, keys: string[], isInclude = true) {
   const r: GenericObjectType = {};
