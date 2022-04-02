@@ -236,7 +236,7 @@ export const useStore = defineStore('main', {
       deepReplace(
         this,
         loadedSave,
-        <T extends Q, Q extends object>(obj: T, data: Q key: keyof Q) => {
+        <T extends Q, Q extends object>(obj: T, data: Q, key: keyof Q) => {
           const str = Object.keys(REPLACE_PATH).find((element) => {
             return element === key;
           }) as keyof typeof REPLACE_PATH;

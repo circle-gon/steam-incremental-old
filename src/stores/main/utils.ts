@@ -20,11 +20,19 @@ const displayNumber = function (what: number, prec = 2, overide = false) {
 const prettyTimeAsTotal = function (data: number) {
   const hours = Math.floor(data / 1000 / 60 / 60);
   const minutes = Math.floor(data / 1000 / 60 - hours * 60);
-  const seconds = (data / 1000 - hours * 3600 - minutes * 60).toFixed(2);
-  function format(time, name, comma=true) {
-    return time > 0 ? time + (time === 1 ? ` ${name}${(comma ? ',' : '')}`) : ""
+  const seconds = parseInt(
+    (data / 1000 - hours * 3600 - minutes * 60).toFixed(2)
+  );
+  function format(time: number, name: string, comma = true) {
+    return time > 0
+      ? time + ' ' + name + (time > 1 ? 's' : '') + (comma ? ',' : '')
+      : '';
   }
-  return `You have played the game for ${[format(hours, "hours"), format(minutes, "minutes"), format(seconds, "seconds")]}`;
+  return [
+    format(hours, 'hour'),
+    format(minutes, 'minute'),
+    format(seconds, 'second', false),
+  ].join(' ');
 };
 // util functions
 const getTime = function () {
@@ -76,20 +84,23 @@ export function isObject(obj: unknown): obj is object {
 const deepReplace = function mergeDeep<T extends Q, Q extends object>(
   target: T,
   source: Q,
-  modifier: <T extends Q, Q extends object>(target: T, source: Q, key: keyof Q) => boolean = () =>
-    false
+  modifier: <T extends Q, Q extends object>(
+    target: T,
+    source: Q,
+    key: keyof Q
+  ) => boolean = () => false
 ): void {
-    for (const key in source) {
-      if (!Object.hasOwn(source, key)) continue;
-      if (modifier(target, source, key)) continue;
-      //debugger;
-      const val = source[key];
-      if (typeof val === 'object') {
-        mergeDeep(target[key], val, modifier);
-      } else {
-        Object.assign(target, { [key]: source[key] });
-      }
+  for (const key in source) {
+    if (!Object.hasOwn(source, key)) continue;
+    if (modifier(target, source, key)) continue;
+    //debugger;
+    const val = source[key];
+    if (typeof val === 'object') {
+      mergeDeep(target[key], val, modifier);
+    } else {
+      Object.assign(target, { [key]: source[key] });
     }
+  }
 };
 const copy = function (v: GenericObjectType, keys: string[], isInclude = true) {
   const r: GenericObjectType = {};

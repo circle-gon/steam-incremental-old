@@ -1,9 +1,6 @@
 import type { TabOptionsType, InnerTabOptionsType } from "./tabTypes";
 
 // util types
-export type FilteredKeys<T, U> = {
-  [P in keyof T]: T[P] extends U ? P : never;
-}[keyof T];
 export function isOfType<T>(test: T, prop: keyof T): test is T {
   return (test as T)[prop] !== undefined;
 }
