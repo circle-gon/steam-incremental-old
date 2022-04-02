@@ -30,6 +30,15 @@ interface CoreTabsType {
   lore?: LoreType[];
   buttons?: Array<RealSettingButtonType | undefined>[];
 }
+type BasicType =
+  | string
+  | number
+  | boolean
+  | { [key: string]: BasicType }
+  | BasicType[];
+export interface InnerTabsType extends CoreTabsType {
+    actual: InnerTabOptionsType;
+  }
 export type SteamResourceType = "heat" | "water" | "fill";
 export interface AchievementType {
   desc: string;
@@ -98,14 +107,6 @@ export interface OneTimeUpgradeType extends CoreUpgradeType {
 export interface GenericObjectType {
   [key: string]: BasicType;
 }
-export type GenericArrayType = BasicType[];
-export type GenericObjectTypeType = GenericArrayType | GenericObjectType;
-export type BasicType =
-  | string
-  | number
-  | boolean
-  | { [key: string]: BasicType }
-  | BasicType[];
 export interface OneTimeSteamUpgradeType {
   stronger: OneTimeUpgradeType;
   auto: OneTimeUpgradeType;
@@ -126,14 +127,11 @@ export interface StatTrackerType {
   resources: TrackType;
   update: (content: ContentType) => void;
 }
-export interface InnerTabsType extends CoreTabsType {
-  actual: InnerTabOptionsType;
-}
 export interface TabsType extends CoreTabsType {
   actual: TabOptionsType;
   subtabs: InnerTabsType[] | [];
 }
-export interface InputType {
+interface InputType {
   min: number;
   max: number;
   getValue: () => number;
@@ -155,7 +153,7 @@ export interface SettingButtonInputType {
   doInput: (value: number) => void;
   other: InputType;
 }
-export type RealSettingButtonType = SettingButtonType | SettingButtonInputType;
+type RealSettingButtonType = SettingButtonType | SettingButtonInputType;
 
 export interface NotificationType {
   text: string;

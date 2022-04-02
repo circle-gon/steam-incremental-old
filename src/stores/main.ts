@@ -17,7 +17,7 @@ const ALL_STORES = {
   notify: useNotificationStore,
   stats: useStatsStore,
 };
-export const useStore = defineStore('main', {
+const useStore = defineStore('main', {
   state: () => ({
     // modal stuff (but really small)
     modal: '',
@@ -241,7 +241,7 @@ export const useStore = defineStore('main', {
             return element === key;
           }) as keyof typeof REPLACE_PATH;
           //debugger
-          const val = data[key]
+          const val = data[key];
           if (str !== undefined && isObject(val)) {
             deepReplace(REPLACE_PATH[str](), val);
             return true;
@@ -262,7 +262,7 @@ export const useStore = defineStore('main', {
     },
   },
 });
-export const REPLACE_PATH = Object.fromEntries(
+const REPLACE_PATH = Object.fromEntries(
   Object.entries(ALL_STORES).filter((item) =>
     ['steam', 'stats'].includes(item[0])
   )
@@ -284,4 +284,10 @@ if (hot && isImportHot(hot)) {
     useSteamStore().init();
   });
 }
-export { useSteamStore, useTabsStore, useNotificationStore, useStatsStore };
+export {
+  useSteamStore,
+  useTabsStore,
+  useStatsStore,
+  useNotificationStore,
+  useStore,
+};
