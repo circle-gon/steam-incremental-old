@@ -5,7 +5,7 @@ import type {
   ResourceType,
   GainType,
 } from "../main/types";
-import { isOfType } from "../main/types";
+import { isOfType } from "../main/typeUtils";
 import { upThenDown as defaultQueue } from "../main/queue-gpt";
 class Resource implements ResourceType {
   owned: number;

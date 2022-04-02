@@ -16,6 +16,15 @@ const displayNumber = function (what: number, prec = 2, overide = false) {
     return what.toExponential(prec);
   }
 };
+
+// time utils
+const getTime = function () {
+  return Date.now();
+};
+function getTimePassed(time: number) {
+  return (getTime() - time) / 1000;
+}
+
 // time formatting
 const prettyTimeAsTotal = function (data: number) {
   const hours = Math.floor(data / 1000 / 60 / 60);
@@ -35,21 +44,12 @@ const prettyTimeAsTotal = function (data: number) {
   ].join(' ');
 };
 // util functions
-const getTime = function () {
-  return Date.now();
-};
-function getTimePassed(time: number) {
-  return (getTime() - time) / 1000;
-}
 const R = function <Type, OtherType>(
   item: Type | undefined,
   replacer: OtherType
 ) {
   return item !== undefined ? item : replacer;
 };
-export function isObject(obj: unknown): obj is object {
-  return obj !== null && typeof obj === 'object';
-}
 const deepReplace = function mergeDeep<T extends Q, Q extends object>(
   target: T,
   source: Q,

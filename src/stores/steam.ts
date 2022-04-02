@@ -5,7 +5,7 @@ import type {
   SteamResourceType,
   QueueType,
 } from './main/types';
-import { isOfType } from './main/types';
+import { isOfType } from './main/typeUtils';
 import { StatTracker } from './classes/trackers';
 import { OneTimeUpgrades } from './classes/upgrades';
 import { linear, upThenDown } from './main/queue-gpt';

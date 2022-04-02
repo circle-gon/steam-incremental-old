@@ -1,7 +1,8 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import type { StateTree } from 'pinia';
 import type { GenericObjectType, OneTimeSteamUpgradeType } from './main/types';
-import { getTime, copy, deepReplace, isObject } from './main/utils';
+import { getTime, copy, deepReplace } from './main/utils';
+import { isObject } from './main/typeUtils';
 import { StatTracker } from './classes/trackers';
 import { Upgrades } from './classes/upgrades';
 import { Resource } from './classes/resource';
@@ -11,12 +12,6 @@ import { useTabsStore } from './tabs';
 import { useNotificationStore } from './notifications';
 import { useStatsStore } from './stats';
 
-const ALL_STORES = {
-  steam: useSteamStore,
-  tabs: useTabsStore,
-  notify: useNotificationStore,
-  stats: useStatsStore,
-};
 const useStore = defineStore('main', {
   state: () => ({
     // modal stuff (but really small)
@@ -149,68 +144,6 @@ const useStore = defineStore('main', {
       useNotificationStore().notify('Game saved.');
     },
     loadSave() {
-      /*const performSaveImport = (cache?: {
-        stack: Array<string | number>;
-        data: BasicType;
-      }) => {
-        if (typeof cache === 'undefined') {
-          let loadedSave = '';
-          const saveToImport = this.internals.save
-            ? this.internals.save
-            : localStorage.getItem('sgsave');
-          if (!saveToImport) return;
-          try {
-            loadedSave = JSON.parse(
-              LZString.decompressFromBase64(saveToImport) as string
-            );
-          } catch (e) {
-            // validation of save
-            console.error(e);
-            useNotificationStore().notify(
-              'An error occured while importing your save.'
-            );
-            return;
-          }
-          // this didn't happen but just in case
-          if (loadedSave === null) {
-            useNotificationStore().notify('Save is empty or is invalid.');
-            return;
-          }
-          performSaveImport({ stack: [], data: loadedSave });
-        } else if (typeof cache.data === 'object' && cache.data !== null) {
-          const toIter = Array.isArray(cache.data)
-            ? cache.data.entries()
-            : Object.entries(cache.data);
-          for (const [key, data] of toIter) {
-            const copyOfCache = cache.stack.slice();
-            copyOfCache.push(key);
-            performSaveImport({
-              stack: copyOfCache,
-              data: data,
-            });
-          }
-        } else {
-          let getString = '';
-          cache.stack.forEach((item) => {
-            const strToPut =
-              typeof item === 'number' ? `[${item}]` : `.${item}`;
-            getString += strToPut;
-          });
-          // a workaround for now
-          const inOthers = inRP(getString);
-          if (inOthers) {
-            getString = getString.replace(inOthers.text, '');
-            inOthers.obj().loadSaveFromString(getString, cache.data);
-          } else {
-            Function(
-              'state',
-              'data',
-              'state' + getString + '=data'
-            )(this, cache.data);
-          }
-        }
-      };
-      performSaveImport();*/
       let loadedSave = {};
       const saveToImport = this.internals.save
         ? this.internals.save
@@ -262,12 +195,23 @@ const useStore = defineStore('main', {
     },
   },
 });
+
+// store data
+const KEEP_STORES = ['steam', 'stats']
+const ALL_STORES = {
+  steam: useSteamStore,
+  tabs: useTabsStore,
+  notify: useNotificationStore,
+  stats: useStatsStore,
+};
 const REPLACE_PATH = Object.fromEntries(
   Object.entries(ALL_STORES).filter((item) =>
-    ['steam', 'stats'].includes(item[0])
+    KEEP_STORES.includes(item[0])
   )
 );
 
+
+// hot reloading
 function isImportHot(hot: unknown): hot is Required<ImportMeta>['hot'] {
   return typeof hot === 'object' && hot !== null && !Array.isArray(hot);
 }
@@ -284,6 +228,7 @@ if (hot && isImportHot(hot)) {
     useSteamStore().init();
   });
 }
+
 export {
   useSteamStore,
   useTabsStore,

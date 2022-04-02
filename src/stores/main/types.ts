@@ -1,11 +1,13 @@
-import type { TabOptionsType, InnerTabOptionsType } from "./tabTypes";
-
-// util types
-export function isOfType<T>(test: T, prop: keyof T): test is T {
-  return (test as T)[prop] !== undefined;
-}
+import type { TabOptionsType, InnerTabOptionsType } from './tabTypes';
 
 // unexported types
+type BasicType =
+  | string
+  | number
+  | boolean
+  | { [key: string]: BasicType }
+  | BasicType[];
+type RealSettingButtonType = SettingButtonType | SettingButtonInputType;
 interface CoreUpgradeType {
   name: string;
   desc: string;
@@ -30,24 +32,24 @@ interface CoreTabsType {
   lore?: LoreType[];
   buttons?: Array<RealSettingButtonType | undefined>[];
 }
-type BasicType =
-  | string
-  | number
-  | boolean
-  | { [key: string]: BasicType }
-  | BasicType[];
-export interface InnerTabsType extends CoreTabsType {
-    actual: InnerTabOptionsType;
-  }
-export type SteamResourceType = "heat" | "water" | "fill";
-export interface AchievementType {
+interface InputType {
+  min: number;
+  max: number;
+  getValue: () => number;
+  result: (r: number) => number;
+}
+interface InnerTabsType extends CoreTabsType {
+  actual: InnerTabOptionsType;
+}
+type SteamResourceType = 'heat' | 'water' | 'fill';
+interface AchievementType {
   desc: string;
   hoverText: string;
   img: string;
   isUnlocked: () => boolean;
   bonus: number;
 }
-export interface ResourceType {
+interface ResourceType {
   owned: number;
   multi: number;
   update: () => void;
@@ -64,12 +66,12 @@ export interface ResourceType {
   isEmpty: (shouldEmpty?: boolean) => boolean;
   isNotFull: boolean;
 }
-export type UpgradeDataType =
+type UpgradeDataType =
   | { show: false }
   | { show: true; getBonus: () => string };
-export type GainType = (data: QueueType) => number;
-export type ResourceQueueType = Required<ResourceType>;
-export interface ResourceInputType {
+type GainType = (data: QueueType) => number;
+type ResourceQueueType = Required<ResourceType>;
+interface ResourceInputType {
   owned?: number;
   multi?: number;
   req?: number;
@@ -79,7 +81,7 @@ export interface ResourceInputType {
   sideEffect?: (diff: number) => void;
   canDo?: () => boolean;
 }
-export interface QueueType {
+interface QueueType {
   remain: number;
   onStart: number;
   time: number;
@@ -131,31 +133,34 @@ export interface TabsType extends CoreTabsType {
   actual: TabOptionsType;
   subtabs: InnerTabsType[] | [];
 }
-interface InputType {
-  min: number;
-  max: number;
-  getValue: () => number;
-  result: (r: number) => number;
-}
 export interface LoreType {
   text: string;
   unlocked: () => boolean;
   textRequire: string;
 }
 export interface SettingButtonType {
-  type: "button";
+  type: 'button';
   display: () => string | null;
   do: () => void;
 }
 export interface SettingButtonInputType {
-  type: "input";
+  type: 'input';
   display: () => string | null;
   doInput: (value: number) => void;
   other: InputType;
 }
-type RealSettingButtonType = SettingButtonType | SettingButtonInputType;
-
 export interface NotificationType {
   text: string;
   time: number;
+}
+export type {
+  SteamResourceType,
+  InnerTabsType,
+  AchievementType,
+  ResourceType,
+  UpgradeDataType,
+  GainType,
+  ResourceQueueType,
+  ResourceInputType,
+  QueueType
 }
