@@ -5,12 +5,12 @@ import { getTime, copy, deepReplace } from './main/utils';
 import { isObject } from './main/typeUtils';
 import { StatTracker } from './classes/trackers';
 import { Upgrades } from './classes/upgrades';
-import { Resource } from './classes/resource';
 import LZString from 'lz-string';
 import { useSteamStore } from './steam';
 import { useTabsStore } from './tabs';
 import { useNotificationStore } from './notifications';
 import { useStatsStore } from './stats';
+import { isRef } from 'vue';
 
 const useStore = defineStore('main', {
   state: () => ({
@@ -40,15 +40,13 @@ const useStore = defineStore('main', {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const replacer = function (key: string, data: any) {
         if (['internals', 'modal'].includes(key)) return undefined;
+        //debugger;
         // including those results that just include return for completeness
         if (data instanceof StatTracker) {
           return copy(data as unknown as GenericObjectType, ['resList'], false);
         }
         if (data instanceof Upgrades) {
           return copy(data as unknown as GenericObjectType, ['level'], true);
-        }
-        if (data instanceof Resource) {
-          return data;
         }
         return data;
       };
@@ -60,6 +58,7 @@ const useStore = defineStore('main', {
       Object.entries(REPLACE_PATH).forEach((entries) => {
         save[entries[0]] = entries[1]().$state;
       });
+      //debugger;
       return LZString.compressToBase64(JSON.stringify(save, replacer));
     },
     getData: () => (layer: number) => {

@@ -1,13 +1,14 @@
 import { defineStore } from 'pinia';
-import { Resource } from './classes/resource';
+import { Resource } from './compose/resource';
 import type {
   ResourceQueueType,
   SteamResourceType,
   QueueType,
 } from './main/types';
+import type { ToRef } from 'vue';
 import { isOfType } from './main/typeUtils';
 import { StatTracker } from './classes/trackers';
-import { OneTimeUpgrades } from './classes/upgrades';
+import { OneTimeUpgrades } from './compose/upgrades';
 import { linear, upThenDown } from './main/queue-gpt';
 
 const baseConfigFactory = function () {
@@ -16,17 +17,17 @@ const baseConfigFactory = function () {
 const autoCap = 0.4;
 export const useSteamStore = defineStore('steam', {
   state: () => ({
-    steam: new Resource(),
-    water: new Resource({
+    steam: Resource(),
+    water: Resource({
       owned: 10,
       req: 1e100, // absurd big number to solve problems
     }) as ResourceQueueType,
-    heat: new Resource({ req: 1 }) as ResourceQueueType,
-    fill: new Resource({ req: 1 }) as ResourceQueueType,
+    heat: Resource({ req: 1 }) as ResourceQueueType,
+    fill: Resource({ req: 1 }) as ResourceQueueType,
     isDoing: false,
     statTracker: new StatTracker(['steam']),
     oneUpgrades: {
-      stronger: new OneTimeUpgrades(
+      stronger: OneTimeUpgrades(
         'Getting stronger!',
         'Multiplies speed of all resources by 2',
         1,
@@ -34,7 +35,7 @@ export const useSteamStore = defineStore('steam', {
         () => true,
         baseConfigFactory()
       ),
-      auto: new OneTimeUpgrades(
+      auto: OneTimeUpgrades(
         'Make a Rube Goldberg machine',
         'Automaticially fills the furnace based on your steam',
         3,
@@ -42,7 +43,7 @@ export const useSteamStore = defineStore('steam', {
         () => false,
         baseConfigFactory()
       ),
-      help: new OneTimeUpgrades(
+      help: OneTimeUpgrades(
         "Welp, that wasn't fun",
         'Changes water gain formula from m/(1 + ce^(-kx)) (gain goes up and down) to linear',
         15,
@@ -105,12 +106,12 @@ export const useSteamStore = defineStore('steam', {
       this.isDoing = isDoingAttr.includes(false);
       if (OneTimeUpgrades.use(this.oneUpgrades.auto)) {
         const multi = this.autoFurnaceMulti / 1000;
-        if (this.heat.isNotFull && this.heat.queueData.canDo()) {
+        if (this.heat.isNotFull() && this.heat.queueData.canDo()) {
           const result = this.heat.multi * multi * delta;
           this.heat.owned += result;
           this.heat.queueData.sideEffect(result);
         }
-        if (this.fill.isNotFull && this.fill.queueData.canDo()) {
+        if (this.fill.isNotFull() && this.fill.queueData.canDo()) {
           let result = this.fill.multi * multi * delta;
           result = result > this.water.owned ? this.water.owned : result;
           this.fill.owned += result;

@@ -29,7 +29,7 @@ function getTimePassed(time: number) {
 const prettyTimeAsTotal = function (data: number) {
   const hours = Math.floor(data / 1000 / 60 / 60);
   const minutes = Math.floor(data / 1000 / 60 - hours * 60);
-  const seconds = parseInt(
+  const seconds = parseFloat(
     (data / 1000 - hours * 3600 - minutes * 60).toFixed(2)
   );
   function format(time: number, name: string, comma = true) {
@@ -62,7 +62,6 @@ const deepReplace = function mergeDeep<T extends Q, Q extends object>(
   for (const key in source) {
     if (!Object.hasOwn(source, key)) continue;
     if (modifier(target, source, key)) continue;
-    //debugger;
     const val = source[key];
     if (typeof val === 'object') {
       mergeDeep(target[key], val, modifier);

@@ -1,5 +1,5 @@
 import type { TabOptionsType, InnerTabOptionsType } from './tabTypes';
-
+import type { Ref } from 'vue';
 // unexported types
 
 // generic types
@@ -54,8 +54,8 @@ interface CoreUpgradeType {
 }
 // types of upgrades
 interface UpgradeType extends CoreUpgradeType {
-  getPrice: (level: number) => number;
-  getEffect: (level: number) => number;
+  getPrice: (level: Ref<number>) => number;
+  getEffect: (level: Ref<number>) => number;
 }
 interface OneTimeUpgradeType extends CoreUpgradeType {
   getPrice: () => number;
@@ -106,9 +106,18 @@ interface QueueType {
   manual: boolean;
 }
 type GainType = (data: QueueType) => number;
+interface QueueDataType {
+  req: number;
+  k: number;
+  c: number;
+  queue: QueueType[];
+  gainPerTick: GainType;
+  sideEffect: (diff: number) => void;
+  canDo: () => boolean;
+}
 interface ResourceType {
-  owned: number;
-  multi: number;
+  owned: Ref<number>;
+  multi: Ref<number>;
   update: () => void;
   addNewQueue: (drain: number) => void;
   queueData?: {
@@ -121,7 +130,7 @@ interface ResourceType {
     canDo: () => boolean;
   };
   isEmpty: (shouldEmpty?: boolean) => boolean;
-  isNotFull: boolean;
+  isNotFull: () => boolean;
 }
 type ResourceQueueType = Required<ResourceType>;
 interface ResourceInputType {
@@ -224,6 +233,7 @@ export type {
   // resource types
   QueueType,
   GainType,
+  QueueDataType,
   ResourceType,
   ResourceQueueType,
   ResourceInputType,
