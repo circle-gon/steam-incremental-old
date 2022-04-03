@@ -8,6 +8,7 @@
       {{ upgrade.name }}
       <br />{{ upgrade.desc }} <br />Cost: {{ upgrade.getPriceDisplay() }}
       <div v-if="currentData.show">Currently: {{ currentData.getBonus() }}</div>
+      <div><slot></slot></div>
     </button>
   </span>
 </template>

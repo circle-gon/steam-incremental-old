@@ -104,20 +104,22 @@ export const useSteamStore = defineStore('steam', {
         }
       }
       this.isDoing = isDoingAttr.includes(false);
+      const track = [0, 0];
       if (OneTimeUpgrades.use(this.oneUpgrades.auto)) {
-        const multi = this.autoFurnaceMulti / 1000;
+        const multi = this.autoFurnaceMulti;
         if (this.heat.isNotFull() && this.heat.queueData.canDo()) {
           const result = this.heat.multi * multi * delta;
           this.heat.owned += result;
-          this.heat.queueData.sideEffect(result);
+          track[0] = 1;
         }
         if (this.fill.isNotFull() && this.fill.queueData.canDo()) {
           let result = this.fill.multi * multi * delta;
-          result = result > this.water.owned ? this.water.owned : result;
           this.fill.owned += result;
-          this.fill.queueData.sideEffect(result);
+          track[1] = 1;
         }
       }
+      const multi = track.filter((elem) => elem !== 0).length / 2;
+      this.steam.owned = this.steam.owned ** (1 - 0.01 * delta * multi);
     },
     getResource(res: SteamResourceType) {
       const value = this[res];

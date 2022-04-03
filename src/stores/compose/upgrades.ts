@@ -90,8 +90,8 @@ function Upgrades(
     return objFill;
   }
   return {
-    name,//
-    desc,//
+    name, //
+    desc, //
     level,
     layer, //
     data,
@@ -102,10 +102,10 @@ function Upgrades(
     getResource,
     getCurrentPrice,
     getPriceDisplay,
-    isMaxLevel,//
+    isMaxLevel, //
     hasBought,
     getStore,
-    isUnbuyable,//
+    isUnbuyable, //
     buy,
   };
 }
@@ -138,8 +138,8 @@ function OneTimeUpgrades(
     level: __upgInstance__.level,
     layer: __upgInstance__.layer,
     data: __upgInstance__.data,
-    getPrice: __upgInstance__.getPrice,
-    getEffect: __upgInstance__.getEffect,
+    getPrice: () => getPrice,
+    getEffect: () => getEffect,
     isUnlocked: __upgInstance__.isUnlocked,
     maxLevel: __upgInstance__.maxLevel,
     getResource: __upgInstance__.getResource,

@@ -27,11 +27,9 @@ function getTimePassed(time: number) {
 
 // time formatting
 const prettyTimeAsTotal = function (data: number) {
-  const hours = Math.floor(data / 1000 / 60 / 60);
-  const minutes = Math.floor(data / 1000 / 60 - hours * 60);
-  const seconds = parseFloat(
-    (data / 1000 - hours * 3600 - minutes * 60).toFixed(2)
-  );
+  const hours = Math.floor(data / 3600);
+  const minutes = Math.floor((data % 3600) / 60);
+  const seconds = parseFloat(((data % 3600) % 60).toFixed(2));
   function format(time: number, name: string, comma = true) {
     return time > 0
       ? time + ' ' + name + (time > 1 ? 's' : '') + (comma ? ',' : '')

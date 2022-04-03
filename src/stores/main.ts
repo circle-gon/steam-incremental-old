@@ -1,10 +1,9 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import type { StateTree } from 'pinia';
 import type { GenericObjectType, OneTimeSteamUpgradeType } from './main/types';
-import { getTime, copy, deepReplace } from './main/utils';
+import { getTime, copy, deepReplace, getTimePassed } from './main/utils';
 import { isObject } from './main/typeUtils';
 import { StatTracker } from './classes/trackers';
-import { Upgrades } from './classes/upgrades';
 import LZString from 'lz-string';
 import { useSteamStore } from './steam';
 import { useTabsStore } from './tabs';
@@ -44,9 +43,6 @@ const useStore = defineStore('main', {
         // including those results that just include return for completeness
         if (data instanceof StatTracker) {
           return copy(data as unknown as GenericObjectType, ['resList'], false);
-        }
-        if (data instanceof Upgrades) {
-          return copy(data as unknown as GenericObjectType, ['level'], true);
         }
         return data;
       };
@@ -107,7 +103,7 @@ const useStore = defineStore('main', {
       statsStore.updateAchieves();
     },
     updateExternal(timepassed: number) {
-      this.internals.fps = 1000 / timepassed;
+      this.internals.fps = 1 / timepassed;
       this.updateStats(timepassed);
       this.internals.timestamp = getTime();
       this.updateSaveGameTick();
@@ -183,8 +179,8 @@ const useStore = defineStore('main', {
       );
     },
     mainGameLoop() {
-      const timepassed = getTime() - this.internals.timestamp;
-      if (timepassed > 1000 / this.settings.maxFPS) {
+      const timepassed = getTimePassed(this.internals.timestamp);
+      if (timepassed > 1 / this.settings.maxFPS) {
         this.updateGame(timepassed);
         this.updateExternal(timepassed);
       }
