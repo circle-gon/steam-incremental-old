@@ -95,8 +95,8 @@ function Upgrades(
     buy,
   };
 }
-Upgrades.use = function (upg: UnwrapNestedRefs<UpgradeType>) {
-  return upg.getEffect(ref(upg.level));
+Upgrades.use = function (upg: UpgradeType) {
+  return upg.getEffect(upg.level);
 };
 
 function OneTimeUpgrades(
@@ -138,7 +138,7 @@ function OneTimeUpgrades(
     buy: __upgInstance__.buy,
   };
 }
-OneTimeUpgrades.use = function (upg: UnwrapNestedRefs<OneTimeUpgradeType>) {
+OneTimeUpgrades.use = function (upg: OneTimeUpgradeType) {
   return upg.isMaxLevel() ? upg.getEffect() : 0;
 };
 export { Upgrades, OneTimeUpgrades };

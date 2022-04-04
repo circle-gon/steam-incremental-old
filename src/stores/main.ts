@@ -10,6 +10,7 @@ import { useTabsStore } from './tabs';
 import { useNotificationStore } from './notifications';
 import { useStatsStore } from './stats';
 import type { UnwrapNestedRefs } from 'vue';
+import { toRefs } from 'vue';
 
 const useStore = defineStore('main', {
   state: () => ({
@@ -71,18 +72,19 @@ const useStore = defineStore('main', {
       const layer = this.getData(data.layer);
       function isOneUpgrades(
         name: string,
-        upgs: UnwrapNestedRefs<OneTimeSteamUpgradeType>
-      ): name is keyof UnwrapNestedRefs<OneTimeSteamUpgradeType> {
+        upgs: OneTimeSteamUpgradeType
+      ): name is keyof OneTimeSteamUpgradeType {
         return name in upgs;
       }
       if (layer === undefined) {
         console.error('Invalid data.layer: ' + data.layer);
       } else {
+        
         if (!data.oneTime) {
           //upg.upgrades[data.name].buy();
           console.error('No multi-buy steam upgrades');
-        } else if (isOneUpgrades(data.name, layer.oneUpgrades)) {
-          layer.oneUpgrades[data.name].buy();
+        } else if (isOneUpgrades(data.name, real)) {
+          real[data.name].buy();
         }
       }
     },

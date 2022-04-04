@@ -12,7 +12,7 @@ import type { UnwrapNestedRefs } from 'vue';
 function Resource(obj: ResourceInputType = {}) {
   const owned = ref(R(obj.owned, 0));
   const multi = ref(R(obj.multi, 1));
-  let queueData: undefined | UnwrapNestedRefs<QueueDataType> = undefined;
+  let queueData: undefined | QueueDataType = undefined;
   if (obj.req !== undefined) {
     queueData = reactive({
       req: obj.req,
