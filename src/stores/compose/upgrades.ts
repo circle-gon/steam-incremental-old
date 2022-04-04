@@ -5,11 +5,9 @@ import type {
   UpgradeType,
   OneTimeUpgradeType,
   OneTimeConfigType,
-  UpgradeDataType,
-  CoreConfigType,
 } from '../main/types';
 import { ref } from 'vue';
-import type { Ref } from 'vue';
+import type { Ref, UnwrapNestedRefs } from 'vue';
 const basicConfig: OneTimeConfigType & ConfigType = {
   layer: Infinity,
   data: { show: false },
@@ -77,18 +75,6 @@ function Upgrades(
       level.value++;
     }
   }
-  function create<K extends string | number | symbol, T>(obj: Record<K, T>) {
-    const objFill: Record<K, T> = {};
-    for (const [key, value] of Object.entries(obj)) {
-      Object.defineProperty(objFill, key, {
-        get() {
-          console.log(key);
-          return value;
-        },
-      });
-    }
-    return objFill;
-  }
   return {
     name, //
     desc, //
@@ -109,8 +95,8 @@ function Upgrades(
     buy,
   };
 }
-Upgrades.use = function (upg: UpgradeType) {
-  return upg.getEffect(upg.level);
+Upgrades.use = function (upg: UnwrapNestedRefs<UpgradeType>) {
+  return upg.getEffect(ref(upg.level));
 };
 
 function OneTimeUpgrades(
@@ -152,7 +138,7 @@ function OneTimeUpgrades(
     buy: __upgInstance__.buy,
   };
 }
-OneTimeUpgrades.use = function (upg: OneTimeUpgradeType) {
+OneTimeUpgrades.use = function (upg: UnwrapNestedRefs<OneTimeUpgradeType>) {
   return upg.isMaxLevel() ? upg.getEffect() : 0;
 };
 export { Upgrades, OneTimeUpgrades };

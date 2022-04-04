@@ -9,7 +9,7 @@ import { useSteamStore } from './steam';
 import { useTabsStore } from './tabs';
 import { useNotificationStore } from './notifications';
 import { useStatsStore } from './stats';
-import { isRef } from 'vue';
+import type { UnwrapNestedRefs } from 'vue';
 
 const useStore = defineStore('main', {
   state: () => ({
@@ -71,8 +71,8 @@ const useStore = defineStore('main', {
       const layer = this.getData(data.layer);
       function isOneUpgrades(
         name: string,
-        upgs: OneTimeSteamUpgradeType
-      ): name is keyof OneTimeSteamUpgradeType {
+        upgs: UnwrapNestedRefs<OneTimeSteamUpgradeType>
+      ): name is keyof UnwrapNestedRefs<OneTimeSteamUpgradeType> {
         return name in upgs;
       }
       if (layer === undefined) {

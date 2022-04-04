@@ -5,11 +5,9 @@ import type {
   SteamResourceType,
   QueueType,
 } from './main/types';
-import type { ToRef } from 'vue';
 import { isOfType } from './main/typeUtils';
 import { StatTracker } from './classes/trackers';
 import { OneTimeUpgrades } from './compose/upgrades';
-import { linear, upThenDown } from './main/queue-gpt';
 
 const baseConfigFactory = function () {
   return { layer: 1, data: { show: false } } as const;
@@ -43,14 +41,6 @@ export const useSteamStore = defineStore('steam', {
         () => false,
         baseConfigFactory()
       ),
-      help: OneTimeUpgrades(
-        "Welp, that wasn't fun",
-        'Changes water gain formula from m/(1 + ce^(-kx)) (gain goes up and down) to linear',
-        15,
-        1,
-        () => false,
-        baseConfigFactory()
-      ),
     },
   }),
   getters: {
@@ -69,20 +59,11 @@ export const useSteamStore = defineStore('steam', {
       auto.isUnlocked = () => {
         return this.oneUpgrades.stronger.hasBought();
       };
-      this.oneUpgrades.help.isUnlocked = () => {
-        return auto.hasBought();
-      };
       this.fill.queueData.sideEffect = (diff: number) => {
         this.water.owned -= diff;
       };
       this.fill.queueData.canDo = () => {
         return this.water.owned > 0;
-      };
-      this.water.queueData.gainPerTick = (data: QueueType) => {
-        const gain = (
-          OneTimeUpgrades.use(this.oneUpgrades.help) ? linear : upThenDown
-        )(data);
-        return gain;
       };
       auto.data.show = true;
       if (auto.data.show) {
@@ -119,7 +100,7 @@ export const useSteamStore = defineStore('steam', {
         }
       }
       const multi = track.filter((elem) => elem !== 0).length / 2;
-      this.steam.owned = this.steam.owned ** (1 - 0.01 * delta * multi);
+      this.steam.owned *= 1 - 0.01 * delta * multi;
     },
     getResource(res: SteamResourceType) {
       const value = this[res];
