@@ -4,21 +4,13 @@ import type { GenericObjectType, OneTimeSteamUpgradeType } from './main/types';
 import { getTime, copy, deepReplace, getTimePassed } from './main/utils';
 import { isObject } from './main/typeUtils';
 import { StatTracker } from './classes/trackers';
-<<<<<<< HEAD
-=======
 import { Upgrades } from './classes/upgrades';
 import { Resource } from './classes/resource';
->>>>>>> parent of 0d60096 (changed things to composables)
 import LZString from 'lz-string';
 import { useSteamStore } from './steam';
 import { useTabsStore } from './tabs';
 import { useNotificationStore } from './notifications';
 import { useStatsStore } from './stats';
-<<<<<<< HEAD
-import type { UnwrapNestedRefs } from 'vue';
-import { toRefs } from 'vue';
-=======
->>>>>>> parent of 0d60096 (changed things to composables)
 
 const useStore = defineStore('main', {
   state: () => ({
@@ -52,15 +44,12 @@ const useStore = defineStore('main', {
         if (data instanceof StatTracker) {
           return copy(data as unknown as GenericObjectType, ['resList'], false);
         }
-<<<<<<< HEAD
-=======
         if (data instanceof Upgrades) {
           return copy(data as unknown as GenericObjectType, ['level'], true);
         }
         if (data instanceof Resource) {
           return data;
         }
->>>>>>> parent of 0d60096 (changed things to composables)
         return data;
       };
       const save: { [key: string]: StateTree } = {

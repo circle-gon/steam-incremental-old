@@ -7,12 +7,8 @@ import type {
 } from './main/types';
 import { isOfType } from './main/typeUtils';
 import { StatTracker } from './classes/trackers';
-<<<<<<< HEAD
-import { OneTimeUpgrades } from './compose/upgrades';
-=======
 import { OneTimeUpgrades } from './classes/upgrades';
 import { linear, upThenDown } from './main/queue-gpt';
->>>>>>> parent of 0d60096 (changed things to composables)
 
 const baseConfigFactory = function () {
   return { layer: 1, data: { show: false } } as const;
@@ -46,17 +42,6 @@ export const useSteamStore = defineStore('steam', {
         () => false,
         baseConfigFactory()
       ),
-<<<<<<< HEAD
-=======
-      help: new OneTimeUpgrades(
-        "Welp, that wasn't fun",
-        'Changes water gain formula from m/(1 + ce^(-kx)) (gain goes up and down) to linear',
-        15,
-        1,
-        () => false,
-        baseConfigFactory()
-      ),
->>>>>>> parent of 0d60096 (changed things to composables)
     },
   }),
   getters: {
@@ -103,13 +88,6 @@ export const useSteamStore = defineStore('steam', {
       this.isDoing = isDoingAttr.includes(false);
       const track = [0, 0];
       if (OneTimeUpgrades.use(this.oneUpgrades.auto)) {
-<<<<<<< HEAD
-        const multi = this.autoFurnaceMulti;
-        if (this.heat.isNotFull() && this.heat.queueData.canDo()) {
-=======
-        const multi = this.autoFurnaceMulti / 1000;
-        if (this.heat.isNotFull && this.heat.queueData.canDo()) {
->>>>>>> parent of 0d60096 (changed things to composables)
           const result = this.heat.multi * multi * delta;
           this.heat.owned += result;
           track[0] = 1;

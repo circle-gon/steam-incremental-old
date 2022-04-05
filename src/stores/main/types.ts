@@ -36,12 +36,12 @@ type RealSettingButtonType = SettingButtonType | SettingButtonInputType;
 // upgrades
 type UpgradeDataType = { show: false } | { show: true; getBonus: () => string };
 interface CoreUpgradeType {
-  name: Ref<string>;
-  desc: Ref<string>;
+  name: string;
+  desc: string;
   isUnlocked: () => boolean;
-  layer: Ref<number>;
-  level:Ref<number>;
-  maxLevel: Ref<number>;
+  layer: number;
+  level: number;
+  maxLevel: number;
   isUnbuyable: () => boolean;
   getCurrentPrice: () => number;
   getPriceDisplay: () => string;
