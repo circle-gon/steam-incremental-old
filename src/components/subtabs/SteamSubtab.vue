@@ -42,14 +42,16 @@
       :upg-id="i"
       :one-time="true"
       :current-data="upgrade.data"
-    />
+      ><div v-if="i === 'auto'">
+        Enable: <input type="checkbox" v-model="store.autoFurnace" /></div
+    ></upgrade-button>
   </div>
 </template>
 <script setup lang="ts">
-import { useSteamStore } from "@/stores/main";
-import UpgradeButton from "../generic/UpgradeButton.vue";
-import { displayNumber } from "@/stores/main/utils";
-import type { SteamResourceType } from "@/stores/main/types";
+import { useSteamStore } from '@/stores/main';
+import UpgradeButton from '../generic/UpgradeButton.vue';
+import { displayNumber } from '@/stores/main/utils';
+import type { SteamResourceType } from '@/stores/main/types';
 const store = useSteamStore();
 const isUseable = (otherRes: SteamResourceType) => store.isUseable(otherRes);
 const getResource = (res: SteamResourceType) => {

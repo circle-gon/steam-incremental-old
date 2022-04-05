@@ -24,6 +24,7 @@ export const useSteamStore = defineStore('steam', {
     heat: new Resource({ req: 1 }) as ResourceQueueType,
     fill: new Resource({ req: 1 }) as ResourceQueueType,
     isDoing: false,
+    autoFurnace: true,
     statTracker: new StatTracker(['steam']),
     oneUpgrades: {
       stronger: new OneTimeUpgrades(
@@ -36,7 +37,7 @@ export const useSteamStore = defineStore('steam', {
       ),
       auto: new OneTimeUpgrades(
         'Make a Rube Goldberg machine',
-        'Automaticially fills the furnace based on your steam',
+        'Automaticially fills the furnace by a fraction of your multi based on your total steam',
         3,
         1,
         () => false,
@@ -86,7 +87,7 @@ export const useSteamStore = defineStore('steam', {
         }
       }
       this.isDoing = isDoingAttr.includes(false);
-      if (OneTimeUpgrades.use(this.oneUpgrades.auto)) {
+      if (OneTimeUpgrades.use(this.oneUpgrades.auto) && this.autoFurnace) {
         const track = [0, 0];
         const multi = this.autoFurnaceMulti;
         if (this.heat.isNotFull && this.heat.queueData.canDo()) {
