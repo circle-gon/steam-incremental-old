@@ -83,12 +83,11 @@ const useStore = defineStore('main', {
       if (layer === undefined) {
         console.error('Invalid data.layer: ' + data.layer);
       } else {
-        
         if (!data.oneTime) {
           //upg.upgrades[data.name].buy();
           console.error('No multi-buy steam upgrades');
-        } else if (isOneUpgrades(data.name, real)) {
-          real[data.name].buy();
+        } else if (isOneUpgrades(data.name, layer.oneUpgrades)) {
+          layer.oneUpgrades[data.name].buy();
         }
       }
     },
