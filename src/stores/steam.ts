@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { Resource } from './compose/resource';
+import { Resource } from './classes/resource';
 import type {
   ResourceQueueType,
   SteamResourceType,
@@ -7,7 +7,12 @@ import type {
 } from './main/types';
 import { isOfType } from './main/typeUtils';
 import { StatTracker } from './classes/trackers';
+<<<<<<< HEAD
 import { OneTimeUpgrades } from './compose/upgrades';
+=======
+import { OneTimeUpgrades } from './classes/upgrades';
+import { linear, upThenDown } from './main/queue-gpt';
+>>>>>>> parent of 0d60096 (changed things to composables)
 
 const baseConfigFactory = function () {
   return { layer: 1, data: { show: false } } as const;
@@ -15,17 +20,17 @@ const baseConfigFactory = function () {
 const autoCap = 0.4;
 export const useSteamStore = defineStore('steam', {
   state: () => ({
-    steam: Resource(),
-    water: Resource({
+    steam: new Resource(),
+    water: new Resource({
       owned: 10,
       req: 1e100, // absurd big number to solve problems
     }) as ResourceQueueType,
-    heat: Resource({ req: 1 }) as ResourceQueueType,
-    fill: Resource({ req: 1 }) as ResourceQueueType,
+    heat: new Resource({ req: 1 }) as ResourceQueueType,
+    fill: new Resource({ req: 1 }) as ResourceQueueType,
     isDoing: false,
     statTracker: new StatTracker(['steam']),
     oneUpgrades: {
-      stronger: OneTimeUpgrades(
+      stronger: new OneTimeUpgrades(
         'Getting stronger!',
         'Multiplies speed of all resources by 2',
         1,
@@ -33,7 +38,7 @@ export const useSteamStore = defineStore('steam', {
         () => true,
         baseConfigFactory()
       ),
-      auto: OneTimeUpgrades(
+      auto: new OneTimeUpgrades(
         'Make a Rube Goldberg machine',
         'Automaticially fills the furnace based on your steam',
         3,
@@ -41,6 +46,17 @@ export const useSteamStore = defineStore('steam', {
         () => false,
         baseConfigFactory()
       ),
+<<<<<<< HEAD
+=======
+      help: new OneTimeUpgrades(
+        "Welp, that wasn't fun",
+        'Changes water gain formula from m/(1 + ce^(-kx)) (gain goes up and down) to linear',
+        15,
+        1,
+        () => false,
+        baseConfigFactory()
+      ),
+>>>>>>> parent of 0d60096 (changed things to composables)
     },
   }),
   getters: {
@@ -87,13 +103,18 @@ export const useSteamStore = defineStore('steam', {
       this.isDoing = isDoingAttr.includes(false);
       const track = [0, 0];
       if (OneTimeUpgrades.use(this.oneUpgrades.auto)) {
+<<<<<<< HEAD
         const multi = this.autoFurnaceMulti;
         if (this.heat.isNotFull() && this.heat.queueData.canDo()) {
+=======
+        const multi = this.autoFurnaceMulti / 1000;
+        if (this.heat.isNotFull && this.heat.queueData.canDo()) {
+>>>>>>> parent of 0d60096 (changed things to composables)
           const result = this.heat.multi * multi * delta;
           this.heat.owned += result;
           track[0] = 1;
         }
-        if (this.fill.isNotFull() && this.fill.queueData.canDo()) {
+        if (this.fill.isNotFull && this.fill.queueData.canDo()) {
           let result = this.fill.multi * multi * delta;
           this.fill.owned += result;
           track[1] = 1;
