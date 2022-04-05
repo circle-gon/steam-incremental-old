@@ -86,9 +86,10 @@ export const useSteamStore = defineStore('steam', {
         }
       }
       this.isDoing = isDoingAttr.includes(false);
-      const track = [0, 0];
-      const multi = this.autoFurnaceMulti
       if (OneTimeUpgrades.use(this.oneUpgrades.auto)) {
+        const track = [0, 0];
+        const multi = this.autoFurnaceMulti;
+        if (this.heat.isNotFull && this.heat.queueData.canDo()) {
           const result = this.heat.multi * multi * delta;
           this.heat.owned += result;
           track[0] = 1;
@@ -98,8 +99,9 @@ export const useSteamStore = defineStore('steam', {
           this.fill.owned += result;
           track[1] = 1;
         }
-      const steammulti = track.filter((elem) => elem !== 0).length / 2;
-      this.steam.owned *= (1 - 0.01 * steammulti) ** delta;
+        const steammulti = track.filter((elem) => elem !== 0).length / 2;
+        this.steam.owned *= (1 - 0.01 * steammulti) ** delta;
+      }
     },
     getResource(res: SteamResourceType) {
       const value = this[res];
