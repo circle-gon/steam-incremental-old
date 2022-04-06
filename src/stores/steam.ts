@@ -1,14 +1,9 @@
 import { defineStore } from 'pinia';
 import { Resource } from './classes/resource';
-import type {
-  ResourceQueueType,
-  SteamResourceType,
-  QueueType,
-} from './main/types';
+import type { ResourceQueueType, SteamResourceType } from './main/types';
 import { isOfType } from './main/typeUtils';
 import { StatTracker } from './classes/trackers';
 import { OneTimeUpgrades } from './classes/upgrades';
-import { linear, upThenDown } from './main/queue-gpt';
 
 const baseConfigFactory = function () {
   return { layer: 1, data: { show: false } } as const;
@@ -101,7 +96,7 @@ export const useSteamStore = defineStore('steam', {
           track[1] = 1;
         }
         const steammulti = track.filter((elem) => elem !== 0).length / 2;
-        this.steam.owned *= (1 - 0.01 * steammulti) ** delta;
+        this.steam.owned *= (1 - 0.001 * steammulti) ** delta;
       }
     },
     getResource(res: SteamResourceType) {
