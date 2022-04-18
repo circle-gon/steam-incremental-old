@@ -7,7 +7,7 @@ import type {
 } from "../main/types";
 import { isOfType } from "../main/typeUtils";
 import { upThenDown as defaultQueue } from "../main/queue-gpt";
-function resourceError(func: string) {
+function resourceError(func: string): Error {
   throw new Error(
     `Can not perform ${func} on Resource that does not have queueData`
   );
@@ -66,15 +66,14 @@ class Resource implements ResourceType {
     if (this.queueData) {
       return this.owned < this.queueData.req;
     }
-    throw new Error(
-      "Can not perform isFull on Resource that does not have queueData"
-    );
+    throw resourceError("isNotFull")
   }
 
   resetToMax() {
     if (this.queueData) {
       this.owned = Math.min(this.queueData.req, this.owned);
     } else {
+      throw resourceError("resetToMax")
     }
   }
 
