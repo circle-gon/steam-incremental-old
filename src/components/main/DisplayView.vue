@@ -9,9 +9,9 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useStore, useSteamStore } from '@/stores/main';
-import { displayNumber } from '@/stores/main/utils';
-import { computed } from 'vue';
+import { useStore, useSteamStore } from "@/stores/main";
+import { displayNumber } from "@/stores/main/utils";
+import { computed } from "vue";
 const steamStore = useSteamStore();
 const store = useStore();
 const steam = computed(() => steamStore.steam);

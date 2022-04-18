@@ -7,8 +7,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useStatsStore, useSteamStore } from '@/stores/main';
-import { prettyTimeAsTotal, displayNumber } from '@/stores/main/utils';
+import { useStatsStore, useSteamStore } from "@/stores/main";
+import { prettyTimeAsTotal, displayNumber } from "@/stores/main/utils";
 const steamStore = useSteamStore();
 const statsStore = useStatsStore();
 const tracked = steamStore.statTracker.resources;

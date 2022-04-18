@@ -1,4 +1,4 @@
-import type { TabOptionsType, InnerTabOptionsType } from './tabTypes';
+import type { TabOptionsType, InnerTabOptionsType } from "./tabTypes";
 
 // unexported types
 
@@ -21,12 +21,12 @@ interface InputType {
   result: (r: number) => number;
 }
 interface SettingButtonType {
-  type: 'button';
+  type: "button";
   display: () => string | null;
   do: () => void;
 }
 interface SettingButtonInputType {
-  type: 'input';
+  type: "input";
   display: () => string | null;
   doInput: (value: number) => void;
   other: InputType;
@@ -89,7 +89,7 @@ interface TabsType extends CoreTabsType {
 }
 
 // steam types
-type SteamResourceType = 'heat' | 'water' | 'fill';
+type SteamResourceType = "heat" | "water" | "fill";
 interface OneTimeSteamUpgradeType {
   stronger: OneTimeUpgradeType;
   auto: OneTimeUpgradeType;
