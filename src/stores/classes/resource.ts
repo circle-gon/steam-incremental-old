@@ -1,12 +1,12 @@
-import { R, getTime } from "../main/utils";
+import { R, getTime } from '../main/utils';
 import type {
   ResourceInputType,
   QueueType,
   ResourceType,
   GainType,
-} from "../main/types";
-import { isOfType } from "../main/typeUtils";
-import { upThenDown as defaultQueue } from "../main/queue-gpt";
+} from '../main/types';
+import { isOfType } from '../main/typeUtils';
+import { upThenDown as defaultQueue } from '../main/queue-gpt';
 function resourceError(func: string): Error {
   throw new Error(
     `Can not perform ${func} on Resource that does not have queueData`
@@ -66,14 +66,14 @@ class Resource implements ResourceType {
     if (this.queueData) {
       return this.owned < this.queueData.req;
     }
-    throw resourceError("isNotFull")
+    throw resourceError('isNotFull');
   }
 
   resetToMax() {
     if (this.queueData) {
       this.owned = Math.min(this.queueData.req, this.owned);
     } else {
-      throw resourceError("resetToMax")
+      throw resourceError('resetToMax');
     }
   }
 
@@ -86,15 +86,13 @@ class Resource implements ResourceType {
         })
       );
     }
-    throw new Error(
-      "Can not perform isEmpty on Resource that does not have queueData"
-    );
+    throw resourceError('isEmpty');
   }
 
   update() {
     if (this.queueData) {
       for (const [num, data] of this.queueData.queue.entries()) {
-        if (isOfType<QueueType>(data, "c") && this.queueData.canDo()) {
+        if (isOfType<QueueType>(data, 'c') && this.queueData.canDo()) {
           data.lastRemain = data.remain;
           data.remain = this.queueData.gainPerTick(data);
           // (c+1)/c because of start errors
