@@ -35,16 +35,20 @@
       :one-time="false"
     />-->
     <div>Upgrades:</div>
-    <upgrade-button
-      v-for="(upgrade, i) in store.oneUpgrades"
-      :key="upgrade.name"
-      :upgrade="upgrade"
-      :upg-id="i"
-      :one-time="true"
-      :current-data="upgrade.data"
-      ><div v-if="i === 'auto'">
-        Enable: <input v-model="store.autoFurnace" type="checkbox" /></div
-    ></upgrade-button>
+    <div class="flex">
+      <upgrade-button
+        v-for="(upgrade, i) in store.oneUpgrades"
+        :key="upgrade.name"
+        :upgrade="upgrade"
+        :upg-id="i"
+        :one-time="true"
+        :current-data="upgrade.data"
+        ><div v-if="i === 'auto' && upgrade.data.show">
+          Enable: <input v-model="store.autoFurnace" type="checkbox" />
+          <br />Currently: {{ upgrade.data.getBonus() }}
+        </div></upgrade-button
+      >
+    </div>
   </div>
 </template>
 <script setup lang="ts">

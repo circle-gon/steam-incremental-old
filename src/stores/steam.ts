@@ -1,15 +1,15 @@
-import { defineStore } from "pinia";
-import { Resource } from "./classes/resource";
-import type { ResourceQueueType, SteamResourceType } from "./main/types";
-import { isOfType } from "./main/typeUtils";
-import { StatTracker } from "./classes/trackers";
-import { OneTimeUpgrades } from "./classes/upgrades";
+import { defineStore } from 'pinia';
+import { Resource } from './classes/resource';
+import type { ResourceQueueType, SteamResourceType } from './main/types';
+import { isOfType } from './main/typeUtils';
+import { StatTracker } from './classes/trackers';
+import { OneTimeUpgrades } from './classes/upgrades';
 
 const baseConfigFactory = function () {
   return { layer: 1, data: { show: false } } as const;
 };
 const autoCap = 0.4;
-export const useSteamStore = defineStore("steam", {
+export const useSteamStore = defineStore('steam', {
   state: () => ({
     steam: new Resource(),
     water: new Resource({
@@ -20,19 +20,19 @@ export const useSteamStore = defineStore("steam", {
     fill: new Resource({ req: 1 }) as ResourceQueueType,
     isDoing: false,
     autoFurnace: true,
-    statTracker: new StatTracker(["steam"]),
+    statTracker: new StatTracker(['steam']),
     oneUpgrades: {
       stronger: new OneTimeUpgrades(
-        "Getting stronger!",
-        "Multiplies speed of all resources by 2",
+        'Getting stronger!',
+        'Multiplies speed of all resources by 2',
         1,
         1,
         () => true,
         baseConfigFactory()
       ),
       auto: new OneTimeUpgrades(
-        "Make a Rube Goldberg machine",
-        "Automaticially fills the furnace by a fraction of your multi based on your total steam",
+        'Make a Rube Goldberg machine',
+        'Fills the furnace by a fraction of your multi based on your total steam. Decreases steam by 0.1% per second.',
         3,
         1,
         () => false,
@@ -67,8 +67,8 @@ export const useSteamStore = defineStore("steam", {
         auto.data.getBonus = () => {
           return (
             (this.autoFurnaceMulti * 100).toFixed(0) +
-            "%" +
-            (this.autoFurnaceMulti === autoCap ? " (capped)" : "")
+            '%' +
+            (this.autoFurnaceMulti === autoCap ? ' (capped)' : '')
           );
         };
       }
@@ -76,7 +76,7 @@ export const useSteamStore = defineStore("steam", {
     updateResources(delta: number) {
       const isDoingAttr = [];
       for (const value of Object.values(this)) {
-        if (isOfType<ResourceQueueType>(value, "queueData")) {
+        if (isOfType<ResourceQueueType>(value, 'queueData')) {
           value.update();
           isDoingAttr.push(value.isEmpty(false));
         }
@@ -103,7 +103,7 @@ export const useSteamStore = defineStore("steam", {
       const value = this[res];
       if (
         this.isUseable(res) &&
-        (res === "fill" ? this.fill.queueData.canDo() : true)
+        (res === 'fill' ? this.fill.queueData.canDo() : true)
       ) {
         value.addNewQueue(value.multi);
       }

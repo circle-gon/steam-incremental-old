@@ -55,6 +55,11 @@ button {
   transition: 500ms;
 }
 
+.flex {
+  display: flex;
+  justify-content: center;
+}
+
 /* Specific tabs */
 .innertab {
   padding: 0.25rem 1rem;

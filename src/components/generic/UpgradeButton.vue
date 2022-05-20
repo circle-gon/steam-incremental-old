@@ -1,16 +1,16 @@
 <template>
-  <span v-if="upgrade.isUnlocked()">
-    <button
-      :class="{ useable: !upgrade.isUnbuyable(), maxed: upgrade.isMaxLevel() }"
-      :disabled="upgrade.isUnbuyable()"
-      @click="buyUpgrade(upgData)"
-    >
-      {{ upgrade.name }}
-      <br />{{ upgrade.desc }} <br />Cost: {{ upgrade.getPriceDisplay() }}
-      <div v-if="currentData.show">Currently: {{ currentData.getBonus() }}</div>
-      <div><slot></slot></div>
-    </button>
-  </span>
+  <button
+    :class="{ useable: !upgrade.isUnbuyable(), maxed: upgrade.isMaxLevel() }"
+    :disabled="upgrade.isUnbuyable()"
+    @click="buyUpgrade(upgData)"
+    v-if="upgrade.isUnlocked()"
+    style="width: 200px; height: 200px; font-size:90%;"
+  >
+    {{ upgrade.name }}
+    <br />{{ upgrade.desc }} <br />
+    <div><slot></slot></div>
+    Cost: {{ upgrade.getPriceDisplay() }}
+  </button>
 </template>
 <script setup lang="ts">
 import { useStore } from "@/stores/main";
