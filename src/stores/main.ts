@@ -1,21 +1,21 @@
-import { defineStore, acceptHMRUpdate } from "pinia";
-import type { StateTree } from "pinia";
-import type { GenericObjectType, OneTimeSteamUpgradeType } from "./main/types";
-import { getTime, copy, deepReplace, getTimePassed } from "./main/utils";
-import { isObject } from "./main/typeUtils";
-import { StatTracker } from "./classes/trackers";
-import { Upgrades } from "./classes/upgrades";
-import { Resource } from "./classes/resource";
-import LZString from "lz-string";
-import { useSteamStore } from "./steam";
-import { useTabsStore } from "./tabs";
-import { useNotificationStore } from "./notifications";
-import { useStatsStore } from "./stats";
+import { defineStore, acceptHMRUpdate } from 'pinia';
+import type { StateTree } from 'pinia';
+import type { GenericObjectType, OneTimeSteamUpgradeType } from './main/types';
+import { getTime, copy, deepReplace, getTimePassed } from './main/utils';
+import { isObject } from './main/typeUtils';
+import { StatTracker } from './classes/trackers';
+import { Upgrades } from './classes/upgrades';
+import { Resource } from './classes/resource';
+import LZString from 'lz-string';
+import { useSteamStore } from './steam';
+import { useTabsStore } from './tabs';
+import { useNotificationStore } from './notifications';
+import { useStatsStore } from './stats';
 
-const useStore = defineStore("main", {
+const useStore = defineStore('main', {
   state: () => ({
     // modal stuff (but really small)
-    modal: "",
+    modal: '',
     // notifications stuff
     // other 'internal' stuff but should be split into the other stores
     // to not use use[xxxx]Store for everything
@@ -24,7 +24,7 @@ const useStore = defineStore("main", {
       timestamp: getTime(),
       rafID: 0,
       fps: 0,
-      save: "",
+      save: '',
       lastSaveTimer: getTime(),
     },
 
@@ -39,13 +39,13 @@ const useStore = defineStore("main", {
     getSave(): string {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const replacer = function (key: string, data: any) {
-        if (["internals", "modal"].includes(key)) return undefined;
+        if (['internals', 'modal'].includes(key)) return undefined;
         // including those results that just include return for completeness
         if (data instanceof StatTracker) {
-          return copy(data as unknown as GenericObjectType, ["resList"], false);
+          return copy(data as unknown as GenericObjectType, ['resList'], false);
         }
         if (data instanceof Upgrades) {
-          return copy(data as unknown as GenericObjectType, ["level"], true);
+          return copy(data as unknown as GenericObjectType, ['level'], true);
         }
         if (data instanceof Resource) {
           return data;
@@ -67,7 +67,7 @@ const useStore = defineStore("main", {
         case 1:
           return useSteamStore();
         default:
-          console.error("invalid layer: " + layer);
+          console.error('invalid layer: ' + layer);
       }
     },
   },
@@ -81,11 +81,11 @@ const useStore = defineStore("main", {
         return name in upgs;
       }
       if (layer === undefined) {
-        console.error("Invalid data.layer: " + data.layer);
+        console.error('Invalid data.layer: ' + data.layer);
       } else {
         if (!data.oneTime) {
           //upg.upgrades[data.name].buy();
-          console.error("No multi-buy steam upgrades");
+          console.error('No multi-buy steam upgrades');
         } else if (isOneUpgrades(data.name, layer.oneUpgrades)) {
           layer.oneUpgrades[data.name].buy();
         }
@@ -126,7 +126,7 @@ const useStore = defineStore("main", {
     hardReset() {
       if (
         !confirm(
-          "Are you sure to do this? This will wipe all of your progress!"
+          'Are you sure to do this? This will wipe all of your progress!'
         )
       ) {
         return;
@@ -137,33 +137,33 @@ const useStore = defineStore("main", {
       });
       useSteamStore().$reset();
       this.init(false);
-      useNotificationStore().notify("Succesful hard reset.");
+      useNotificationStore().notify('Succesful hard reset.');
     },
     saveGame() {
-      localStorage.setItem("sgsave", this.getSave);
-      useNotificationStore().notify("Game saved.");
+      localStorage.setItem('sgsave', this.getSave);
+      useNotificationStore().notify('Game saved.');
     },
     loadSave() {
       let loadedSave = {};
       const saveToImport = this.internals.save
         ? this.internals.save
-        : localStorage.getItem("sgsave");
+        : localStorage.getItem('sgsave');
       if (!saveToImport) return;
       try {
         loadedSave = JSON.parse(
-          LZString.decompressFromBase64(saveToImport) || ""
+          LZString.decompressFromBase64(saveToImport) || ''
         );
       } catch (e) {
         // validation of save
         console.error(e);
         useNotificationStore().notify(
-          "An error occured while importing your save."
+          'An error occured while importing your save.'
         );
         return;
       }
       // this didn't happen but just in case
       if (loadedSave === null) {
-        useNotificationStore().notify("Save is empty or is invalid.");
+        useNotificationStore().notify('Save is empty or is invalid.');
         return;
       }
       deepReplace(
@@ -176,7 +176,17 @@ const useStore = defineStore("main", {
           //debugger
           const val = data[key];
           if (str !== undefined && isObject(val)) {
-            deepReplace(REPLACE_PATH[str](), val);
+            deepReplace(
+              REPLACE_PATH[str]() as unknown as typeof val,
+              val,
+              <T extends Q, Q extends object>(
+                obj: T,
+                data: Q,
+                key: keyof Q
+              ) => {
+                return key === 'queue';
+              }
+            );
             return true;
           }
           return false;
@@ -197,7 +207,7 @@ const useStore = defineStore("main", {
 });
 
 // store data
-const KEEP_STORES = ["steam", "stats"];
+const KEEP_STORES = ['steam', 'stats'];
 const ALL_STORES = {
   steam: useSteamStore,
   tabs: useTabsStore,
@@ -209,8 +219,8 @@ const REPLACE_PATH = Object.fromEntries(
 );
 
 // hot reloading
-function isImportHot(hot: unknown): hot is Required<ImportMeta>["hot"] {
-  return typeof hot === "object" && hot !== null && !Array.isArray(hot);
+function isImportHot(hot: unknown): hot is Required<ImportMeta>['hot'] {
+  return typeof hot === 'object' && hot !== null && !Array.isArray(hot);
 }
 const hot = import.meta.hot;
 if (hot && isImportHot(hot)) {
@@ -220,7 +230,7 @@ if (hot && isImportHot(hot)) {
   }
   hot.accept((m) => {
     if (!m.useSteamStore) return;
-    console.log("[dev]: hot reload steam.ts -> init");
+    console.log('[dev]: hot reload steam.ts -> init');
     // hot
     useSteamStore().init();
   });

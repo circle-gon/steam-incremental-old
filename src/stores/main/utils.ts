@@ -1,4 +1,5 @@
-import type { GenericObjectType } from "./types";
+import type { GenericObjectType } from './types';
+import { isObject } from './typeUtils';
 // number display
 const displayNumber = function (what: number, prec = 2, overide = false) {
   // if number is interger, display it as whole
@@ -6,7 +7,7 @@ const displayNumber = function (what: number, prec = 2, overide = false) {
     return what.toString();
   } else if (what < 1e9) {
     if (what > 1e3) {
-      return what.toLocaleString("en-US");
+      return what.toLocaleString('en-US');
     } else if (Number.isInteger(what * 10) && !overide) {
       return what.toFixed(1);
     } else {
@@ -32,14 +33,14 @@ const prettyTimeAsTotal = function (data: number) {
   const seconds = parseFloat(((data % 3600) % 60).toFixed(2));
   function format(time: number, name: string, comma = true) {
     return time > 0
-      ? time + " " + name + (time > 1 ? "s" : "") + (comma ? "," : "")
-      : "";
+      ? time + ' ' + name + (time > 1 ? 's' : '') + (comma ? ',' : '')
+      : '';
   }
   return [
-    format(hours, "hour"),
-    format(minutes, "minute"),
-    format(seconds, "second", false),
-  ].join(" ");
+    format(hours, 'hour'),
+    format(minutes, 'minute'),
+    format(seconds, 'second', false),
+  ].join(' ');
 };
 // util functions
 const R = function <Type, OtherType>(
@@ -62,8 +63,8 @@ const deepReplace = function mergeDeep<T extends Q, Q extends object>(
     if (modifier(target, source, key)) continue;
     const val = source[key];
     const targetVal = target[key];
-    if (typeof targetVal === "object" && targetVal !== null) {
-      mergeDeep(targetVal, val, modifier);
+    if (isObject(val)) {
+      mergeDeep(targetVal as unknown as typeof val, val, modifier);
     } else {
       Object.assign(target, { [key]: source[key] });
     }

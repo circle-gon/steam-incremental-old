@@ -32,7 +32,7 @@ export const useSteamStore = defineStore('steam', {
       ),
       auto: new OneTimeUpgrades(
         'Make a Rube Goldberg machine',
-        'Fills the furnace by a fraction of your multi based on your total steam. Decreases steam by 0.1% per second.',
+        'Fills the furnace by a fraction of your multi based on your total steam. Decreases steam by 0.1% per second while active.',
         3,
         1,
         () => false,
@@ -51,6 +51,7 @@ export const useSteamStore = defineStore('steam', {
     },
   },
   actions: {
+    // TODO FIX THIS SHITTY PIECE OF CODE
     init() {
       const auto = this.oneUpgrades.auto;
       auto.isUnlocked = () => {
